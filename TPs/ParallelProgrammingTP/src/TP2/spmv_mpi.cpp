@@ -287,11 +287,11 @@ int main(int argc, char** argv)
         double value = 0 ;
         for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
         {
-          value += local_values[k]*x[local_cols[k]] ;
+          // value += local_values[k]*x[local_cols[k]] ;
+          std::cout << " resultat = " << k << std::endl ;
         }
         local_y[irow] = value ;
       }
-      std::cout << " resultat = " << local_y[0] << std::endl ;
     }
 
     // MPI_Send(local_y.data(), local_kcol_size, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
