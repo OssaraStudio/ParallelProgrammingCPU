@@ -267,11 +267,11 @@ int main(int argc, char** argv)
 
       local_cols.resize(local_cols_size) ;
       MPI_Recv(local_cols.data(), local_cols_size, MPI_INT, 0, 4, MPI_COMM_WORLD, &status) ;
-      for(int i=0; i<local_cols_size; ++i)
-        std::cout << " resultat of rank " << my_rank << " = " << local_cols[i] << std::endl ;
       
       local_kcol.resize(local_kcol_size) ;
       MPI_Recv(local_kcol.data(), local_kcol_size, MPI_INT, 0, 5, MPI_COMM_WORLD, &status) ;
+      for(int i=0; i<local_kcol_size; ++i)
+        std::cout << " resultat of rank " << my_rank << " = " << local_kcol[i] << std::endl ;
     }
 
     std::vector<double> x;
