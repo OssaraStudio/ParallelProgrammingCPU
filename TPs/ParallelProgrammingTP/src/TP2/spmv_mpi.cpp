@@ -116,8 +116,35 @@ int main(int argc, char** argv)
     for(std::size_t i=0;i<nrows;++i)
       x[i] = i+1 ;
 
+    size_t local_size = nrows/nb_proc ;
+    int rest = nrows%nb_proc ;
+
     {
-        std::cout << nrows << std::endl;
+      
+      // SEND GLOBAL SIZE
+      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;
+      // size_t offset = 0 ;
+      {
+        size_t local_nrows = local_size ;
+        if(0 < rest) local_nrows ++ ;
+        // offset += local_size*nrows ;
+      }
+
+      // SEND MATRIX
+      for (int i=1; i<nb_proc;++i)
+      {
+        std::cout<<" SEND MATRIX DATA to proc "<<i<<std::endl ;
+
+        // SEND LOCAL SIZE to PROC I
+        size_t local_nrows = local_size ;
+        if(i < rest) local_nrows ++ ;
+        MPI_Send(&local_nrows, 1, MPI_UNSIGNED_LONG, i, 100, MPI_COMM_WORLD) ;
+        std::cout << "send local size = " << local_nrows << " to " << i << std::endl ;
+
+        // SEND MATRIX DATA
+        // MPI_Send(matrix.data()+offset, local_nrows*nrows, MPI_DOUBLE, i, 101, MPI_COMM_WORLD) ;
+        // offset += local_nrows*nrows ;
+      }
     }
 
     {
