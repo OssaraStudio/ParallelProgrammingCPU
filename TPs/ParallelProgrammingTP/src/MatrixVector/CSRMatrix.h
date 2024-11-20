@@ -31,15 +31,15 @@ class CSRMatrix
       return m_nrows ;
     }
 
-    std::vector<int> kcol() const {
+    std::vector<int> kcol() {
       return m_kcol ;
     }
 
-    std::vector<int> cols() const {
+    std::vector<int> cols() {
       return m_cols ;
     }
 
-    std::vector<double> values() const {
+    std::vector<double> values() {
       return m_values ;
     }
 
