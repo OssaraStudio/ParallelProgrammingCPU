@@ -112,7 +112,7 @@ int main(int argc, char** argv)
 	    	std::vector<double> x;
 		x.resize(nrows) ;
 	
-		std::vector<double> const &values = matrix.get_values();    
+		std::vector<double> const &values = matrix.data();    
 
 	    	for(std::size_t i=0;i<nrows;++i)
  	     		x[i] = i+1 ;
