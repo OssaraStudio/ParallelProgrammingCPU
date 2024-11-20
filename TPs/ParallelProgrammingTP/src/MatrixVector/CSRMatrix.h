@@ -31,15 +31,15 @@ class CSRMatrix
       return m_nrows ;
     }
 
-    int* kcol() const {
+    int* kcol() {
       return m_kcol.data() ;
     }
 
-    int* cols() const {
+    int* cols() {
       return m_cols.data() ;
     }
 
-    double* values() const {
+    double* values() {
       return m_values.data() ;
     }
 
