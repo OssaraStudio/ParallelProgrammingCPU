@@ -11,8 +11,7 @@
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/cmdline.hpp>
 #include <boost/program_options/variables_map.hpp>
-#include "omp.h"
-#include "tbb/tbb.h"
+#include "mpi.h"
 
 #include <string>
 #include <vector>
