@@ -261,7 +261,7 @@ int main(int argc, char** argv)
       }
     }
     double normy = PPTP::norm2(local_y) ;
-    std::cout<<"avant envoie rank = " << i << " "<<"||local_y||="<<normy<<std::endl ;
+    std::cout<<"avant envoie rank = " << my_rank << " "<<"||local_y||="<<normy<<std::endl ;
     MPI_Send(local_y.data(), local_nrows, MPI_DOUBLE, 0, 102, MPI_COMM_WORLD) ;
 
   }
