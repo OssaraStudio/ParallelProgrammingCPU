@@ -11,6 +11,7 @@
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/cmdline.hpp>
 #include <boost/program_options/variables_map.hpp>
+#include <tbb/tbb.h>
 
 #include <string>
 #include <vector>
@@ -85,181 +86,208 @@ int main(int argc, char** argv)
 
   }
 
-
-  if(my_rank==0)
   {
-    DenseMatrix matrix ;
-
-    if(vm.count("file"))
-    {
-      std::string file = vm["file"].as<std::string>() ;
-      generator.readFromFile(file,matrix) ;
-    }
-    else
-    {
-      int nx = vm["nx"].as<int>() ;
-      generator.genLaplacian(nx,matrix) ;
-    }
-
-
-    std::size_t nrows = matrix.nrows();
-    std::vector<double> x;
-    x.resize(nrows) ;
-
-    for(std::size_t i=0;i<nrows;++i)
-      x[i] = i+1 ;
-
-          
-    size_t local_size = nrows/nb_proc ;
-    int rest = nrows%nb_proc ;
-
-    {
-
-      // SEND GLOBAL SIZE
-      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;
-      size_t offset = 0 ;
-      {
-        size_t local_nrows = local_size ;
-        if(0 < rest) local_nrows ++ ;
-        offset += local_size*nrows ;
-      }
-
-
-      // SEND MATRIX
-      for (int i=1; i<nb_proc;++i)
-      {
-        std::cout<<" SEND MATRIX DATA to proc "<<i<<std::endl ;
-
-        // SEND LOCAL SIZE to PROC I
-        size_t local_nrows = local_size ;
-        if(i < rest) local_nrows ++ ;
-        MPI_Send(&local_nrows, 1, MPI_UNSIGNED_LONG, i, 100, MPI_COMM_WORLD) ;
-        std::cout << "send local size = " << local_nrows << " to " << i << std::endl ;
-
-        // SEND MATRIX DATA
-        MPI_Send(matrix.data()+offset, local_nrows*nrows, MPI_DOUBLE, i, 101, MPI_COMM_WORLD) ;
-        offset += local_nrows*nrows ;
-      }
-    }
-
-    {
-      // BROAD CAST VECTOR X
-      /* ... */
-      MPI_Bcast(x.data(), nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD) ; 
-    }
-
-    {
-      std::vector<double> y(nrows);
-      {
-        Timer::Sentry sentry(timer,"DenseMV") ;
-        matrix.mult(x,y) ;
-      }
-      double normy = PPTP::norm2(y) ;
-      std::cout<<"||y||="<<normy<<std::endl ;
-    }
-
-
-    // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
-    DenseMatrix local_matrix ;
-    std::size_t local_nrows ;
-    std::vector<double> fuse_y(nrows) ;
-
-    {
-      // EXTRACT LOCAL DATA FROM MASTER PROC
-
-      // COMPUTE LOCAL SIZE
-      local_nrows = local_size ;
-      if(0 < rest) local_nrows ++ ;
-
-      // EXTRACT LOCAL MATRIX DATA
-    }
-
-    std::vector<double> local_y(local_nrows);
-    {
-      // compute parallel SPMV
-      double const* matrix_ptr = matrix.data() ;
-      for(std::size_t irow =0; irow<local_nrows;++irow)
-      {
-        double value = 0 ;
-        for(std::size_t jcol =0; jcol<nrows;++jcol)
-        {
-        value += matrix_ptr[jcol]*x[jcol] ;
-        }
-        local_y[irow] = value ;
-        matrix_ptr += nrows ;
-      }
-    }
-    fuse_y = local_y ;
-
-    {
-        MPI_Status status ;
-        for(int i=1; i<nb_proc; ++i)
-        {
-            size_t local_nrows = local_size ;
-            if(i < rest) local_nrows ++ ;
-            std::vector<double> local_y(local_nrows);
-
-            MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 102 ,MPI_COMM_WORLD, &status) ;
-            fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end());
-        }
-    }
-
-    double normy = PPTP::norm2(fuse_y) ;
-    std::cout<<"||y||="<<normy<<std::endl ;
+	std::string name_timer = "MPIDenseMV";
+     	name_timer = name_timer + std::to_string(my_rank);
+  	Timer::Sentry sentry(timer, name_timer);
   }
-  else
   {
-    // COMPUTE LOCAL MATRICE LOCAL VECTOR
+  	if(my_rank==0)
+  	{
+    		DenseMatrix matrix ;
 
-    DenseMatrix local_matrix ;
-    std::size_t nrows ;
-    std::size_t local_nrows ;
-    MPI_Status status;
+    		if(vm.count("file"))
+    		{
+      			std::string file = vm["file"].as<std::string>() ;
+	      		generator.readFromFile(file,matrix) ;
+    		}
+    		else
+		{
+     	 		int nx = vm["nx"].as<int>() ;
+     	 		generator.genLaplacian(nx,matrix) ;
+   	 	}
 
-    {
-      // RECV DATA FROM MASTER PROC
 
-      // RECV GLOBAL SIZE
-      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;
-      std::cout << "global size value receive by " << my_rank << " is " << nrows << std::endl ;
+	    	std::size_t nrows = matrix.nrows();
+	    	std::vector<double> x;
+		x.resize(nrows) ;
+	
+		std::vector<double> const &values = matrix.get_values();    
 
-      // RECV LOCAL SIZE
-      MPI_Recv(&local_nrows, 1, MPI_UNSIGNED_LONG, 0, 100, MPI_COMM_WORLD, &status) ;
-      std::cout << "local size value receive by " << my_rank << " is " << local_nrows << std::endl ;
+	    	for(std::size_t i=0;i<nrows;++i)
+ 	     		x[i] = i+1 ;
 
-      // RECV MATRIX DATA
-      local_matrix.init(local_nrows*nrows) ;
-      MPI_Recv(local_matrix.data(), local_nrows*nrows, MPI_DOUBLE, 0, 101, MPI_COMM_WORLD, &status) ;
-    }
+    		{
+      			// SEND GLOBAL SIZE
+      			int nrows_sent=nrows;
+			MPI_Bcast(&nrows_sent, 1, MPI_INT, 0, MPI_COMM_WORLD); 
 
-    std::vector<double> x;
-    {
-      // BROAD CAST VECTOR X
-      /* ... */
-      x.resize(nrows) ;
-      MPI_Bcast(x.data(), nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD) ; 
-    }
+		      	/******* SEND MATRIX ******/
+		      	int begin =0;
+      			{
+	      			int nrows_local = nrows/nb_proc;
+			        int reste = nrows%nb_proc;
+	      			if(0<reste){
+	      				nrows_local++;
+	     	 		}
+	      			begin +=nrows_local;
+      			}
 
-    std::vector<double> local_y(local_nrows) ;
-    {
-      // compute parallel SPMV
-      double const* matrix_ptr = local_matrix.data() ;
-      for(std::size_t irow =0; irow<local_nrows;++irow)
-      {
-        double value = 0 ;
-        for(std::size_t jcol =0; jcol<nrows;++jcol)
-        {
-        value += matrix_ptr[jcol]*x[jcol] ;
-        }
-        local_y[irow] = value ;
-        matrix_ptr += nrows ;
-      }
-    }
+      			for (int i=1; i<nb_proc;++i)
+      			{
+        			//std::cout<<" SEND MATRIX DATA to proc "<<i<<std::endl ;
 
-    MPI_Send(local_y.data(), local_nrows, MPI_DOUBLE, 0, 102, MPI_COMM_WORLD) ;
+	        		// SEND LOCAL SIZE to PROC I
+				int nrows_local = nrows/nb_proc;
+			       	int r= nrows%nb_proc;
+				if(i<r){
+					nrows_local++;
+				}
+			MPI_Send(&nrows_local, 1, MPI_INT, i,1000, MPI_COMM_WORLD);
+        		// SEND MATRIX DATA
+			const double * ptr = values.data() + begin*nrows;
+			MPI_Send(ptr, nrows_local*nrows, MPI_DOUBLE, i, 2000, MPI_COMM_WORLD);	
+			begin += nrows_local;
+	      		}
+    		}
+	   	{	
+      			/***** BROAD CAST VECTOR X ******/
+			MPI_Bcast(x.data(), nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
+        		//std::cout<<" SEND VECTOR DATA to the procs"<<std::endl ;
+    		}	
+
+		/****** COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0******/
+    
+		std::size_t local_nrows ;	
+    		{
+			//COMPUTE LOCAL SIZE
+			int nrows_local = nrows/nb_proc;
+		       	int r= nrows%nb_proc;
+			if(0<r){
+				nrows_local++;
+			}
+		    	local_nrows=(size_t)nrows_local;
+		}
+    
+	    	/***** COMPUTE LOCAL Y ON PROC 0  ******/
+		std::vector<double> local_y(local_nrows);
+    
+    		{
+		      	// compute parallel SPMV      
+			const double * ptr = values.data();
+			for(std::size_t irow=0; irow<local_nrows;++irow)
+			{
+				double value =0;
+				for(std::size_t jcol =0; jcol<nrows;++jcol)
+				{
+					value += ptr[jcol]*x[jcol];
+				}
+				local_y[irow] = value;
+				ptr +=nrows;
+			}
+	    	}
+
+		/****** COMPUTE FINAL Y ******/
+		std::vector<double> y;
+		//int pos =local_nrows;
+   		{
+			//y.insert(y.begin(), local_y.begin(), local_y.end());
+			y=local_y;	
+      			for (int i=1; i<nb_proc;++i)
+      			{
+				int nrows_local = nrows/nb_proc;
+		       		int r= nrows%nb_proc;
+				if(i<r){
+					nrows_local++;
+				}
+		
+				std::vector<double> local_values (nrows_local*nrows);	
+				MPI_Status status;
+
+	
+				MPI_Recv(local_values.data(), nrows_local, MPI_DOUBLE, i, 4000, MPI_COMM_WORLD, &status);
+
+		        	//std::cout<<" RECEIVE LOCAL Y from proc "<<i<<" size "<<nrows_local<<std::endl ;
+
+				y.insert(y.end(), local_values.begin(), local_values.end());
+				//pos+=nrows_local;
+			}
+		 }
+	      	double normy = PPTP::norm2(y) ;
+	      	std::cout<<"||y||="<<normy<<std::endl ;
+		 
+  		timer.printInfo() ;
+  	} 
+  
+  	else
+  	{
+
+    		//DenseMatrix local_matrix ;
+	    	std::size_t nrows ;
+    		std::size_t local_nrows ;
+		std::vector<double> local_matrix_values; 
+
+    		{
+      			/***** RECV DATA FROM MASTER PROC*****/
+      
+      			// RECV GLOBAL SIZE
+
+			int nrows_to_receive;
+			MPI_Bcast(&nrows_to_receive, 1, MPI_INT, 0, MPI_COMM_WORLD);
+			//std::cout<<" receive Bcast"<<my_rank<<" value="<< nrows_to_receive<< std::endl;
+	     		nrows = (size_t)nrows_to_receive;	
+	
+			// RECV LOCAL SIZE
+			int nrows_local_receive;
+			MPI_Status status;	
+			MPI_Recv(&nrows_local_receive, 1, MPI_INT, 0,1000, MPI_COMM_WORLD, &status);
+        
+			//std::cout<<" receive local_rows"<<my_rank<<" value="<< nrows_local_receive<< std::endl;
+      
+	     		local_nrows =(size_t)nrows_local_receive; 
+
+			// RECV MATRIX DATA
+			std::vector<double> local_values (nrows_local_receive*nrows_to_receive);
+			MPI_Recv(local_values.data(), nrows_local_receive*nrows_to_receive, MPI_DOUBLE, 0, 2000, MPI_COMM_WORLD, &status);
+			local_matrix_values = local_values;
+    		}
+
+	    	std::vector<double> x; 
+    		x.resize(nrows) ;
+	
+	    	{
+      			/******** BROAD CAST VECTOR X******/
+			MPI_Bcast(x.data(), nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD); 
+        		//std::cout<<" RECEIVE VECTOR DATA from the master "<<std::endl ;
+	    	}
+
+    		/****** COMPUTE LOCAL Y in current proc *****/
+	    	std::vector<double> local_y(local_nrows);
+	    	{
+      			// compute parallel SPMV
+			const double * ptr = local_matrix_values.data();
+			for(std::size_t irow=0; irow<local_nrows;++irow)
+			{
+				double value =0;
+				for(std::size_t jcol =0; jcol<nrows;++jcol)
+				{
+					value += ptr[jcol]*x[jcol];
+				}
+				local_y[irow] = value;
+				ptr +=nrows;
+			}
+	    	}
+	
+    		/****** SEND THE LOCAL Y TO THE MASTER PROC TO COMPUTE THE GLOBAL Y *****/
+	    	MPI_Send(local_y.data(), local_nrows, MPI_DOUBLE, 0, 4000, MPI_COMM_WORLD);
+
+	        //std::cout<<" SEND LOCAL Y from proc "<<my_rank<<" size "<<local_nrows<<std::endl ;
+	  }
   }
-  timer.printInfo() ;
-  MPI_Finalize() ;
+
+  //Finalyze MPI
+  MPI_Finalize();
+
   return 0 ;
 }
