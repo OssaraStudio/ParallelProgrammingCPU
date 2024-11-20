@@ -112,7 +112,7 @@ int main(int argc, char** argv)
 	    	std::vector<double> x;
 		x.resize(nrows) ;
 	
-		std::vector<double> const &values = matrix.data();    
+		// std::vector<double> const &values = matrix.get_values();    
 
 	    	for(std::size_t i=0;i<nrows;++i)
  	     		x[i] = i+1 ;
@@ -145,7 +145,7 @@ int main(int argc, char** argv)
 				}
 			MPI_Send(&nrows_local, 1, MPI_INT, i,1000, MPI_COMM_WORLD);
         		// SEND MATRIX DATA
-			const double * ptr = values.data() + begin*nrows;
+			const double * ptr = matrix.data() + begin*nrows;
 			MPI_Send(ptr, nrows_local*nrows, MPI_DOUBLE, i, 2000, MPI_COMM_WORLD);	
 			begin += nrows_local;
 	      		}
@@ -175,7 +175,7 @@ int main(int argc, char** argv)
     
     		{
 		      	// compute parallel SPMV      
-			const double * ptr = values.data();
+			const double * ptr = matrix.data();
 			for(std::size_t irow=0; irow<local_nrows;++irow)
 			{
 				double value =0;
