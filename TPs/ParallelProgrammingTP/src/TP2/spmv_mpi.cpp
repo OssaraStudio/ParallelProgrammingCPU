@@ -131,6 +131,7 @@ int main(int argc, char** argv)
       std::vector<double> local_values ;
       std::vector<int> local_cols ;
       std::vector<int> local_kcol ;
+      std::cout << matrix.values().size() << std::endl;
       for (int i=1; i<nb_proc;++i)
       {
         std::cout<<" SEND MATRIX DATA to proc "<<i<<std::endl ;
@@ -142,15 +143,15 @@ int main(int argc, char** argv)
         size_t begin = offset ;        
         offset += local_nrows ;
 
-        local_values(matrix.values().begin() + matrix.kcol()[begin], matrix.values().begin() + matrix.kcol()[offset]) ;
-        local_cols(matrix.cols().begin() + matrix.kcol()[begin], matrix.cols().begin() + matrix.kcol()[offset]) ;
-        local_kcol(matrix.kcol().begin() + begin, matrix.kcol().begin() + offset + 1) ;
+        // local_values(matrix.values().begin() + matrix.kcol()[begin], matrix.values().begin() + matrix.kcol()[offset]) ;
+        // local_cols(matrix.cols().begin() + matrix.kcol()[begin], matrix.cols().begin() + matrix.kcol()[offset]) ;
+        // local_kcol(matrix.kcol().begin() + begin, matrix.kcol().begin() + offset + 1) ;
 
         // SEND LOCAL SIZE to PROC I
 
-        MPI_Send(&local_values.size(), 1, MPI_UNSIGNED_LONG, i, 0, MPI_COMM_WORLD) ;
-        MPI_Send(&local_cols.size(), 1, MPI_UNSIGNED_LONG, i, 1, MPI_COMM_WORLD) ;
-        MPI_Send(&local_kcol.size(), 1, MPI_UNSIGNED_LONG, i, 2, MPI_COMM_WORLD) ;
+        // MPI_Send(&local_values.size(), 1, MPI_UNSIGNED_LONG, i, 0, MPI_COMM_WORLD) ;
+        // MPI_Send(&local_cols.size(), 1, MPI_UNSIGNED_LONG, i, 1, MPI_COMM_WORLD) ;
+        // MPI_Send(&local_kcol.size(), 1, MPI_UNSIGNED_LONG, i, 2, MPI_COMM_WORLD) ;
         
 
         // SEND MATRIX DATA
@@ -186,12 +187,12 @@ int main(int argc, char** argv)
     {
       // RECV LOCAL SIZE
 
-      MPI_Recv(&local_values_size, 1, MPI_UNSIGNED_LONG, 0, 0, MPI_COMM_WORLD, &status) ;
-      MPI_Recv(&local_cols_size, 1, MPI_UNSIGNED_LONG, 0, 1, MPI_COMM_WORLD, &status) ;
-      MPI_Recv(&local_kcol_size, 1, MPI_UNSIGNED_LONG, 0, 2, MPI_COMM_WORLD, &status) ;
-      std::cout << "local size value receive by " << my_rank << " is " << local_values_size << std::endl ;
-      std::cout << "local cols value receive by " << my_rank << " is " << local_cols_size << std::endl ;
-      std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol_size << std::endl ;
+      // MPI_Recv(&local_values_size, 1, MPI_UNSIGNED_LONG, 0, 0, MPI_COMM_WORLD, &status) ;
+      // MPI_Recv(&local_cols_size, 1, MPI_UNSIGNED_LONG, 0, 1, MPI_COMM_WORLD, &status) ;
+      // MPI_Recv(&local_kcol_size, 1, MPI_UNSIGNED_LONG, 0, 2, MPI_COMM_WORLD, &status) ;
+      // std::cout << "local size value receive by " << my_rank << " is " << local_values_size << std::endl ;
+      // std::cout << "local cols value receive by " << my_rank << " is " << local_cols_size << std::endl ;
+      // std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol_size << std::endl ;
     }
 
   }
