@@ -127,6 +127,14 @@ int main(int argc, char** argv)
         offset += local_nrows ;
       }
 
+      std::vector<double> local_values(matrix.values(), matrix.values() + *(matrix.kcol() + offset)) ;
+      std::vector<int> local_cols(matrix.cols(), matrix.cols() + *(matrix.kcol() + offset)) ;
+      std::vector<int> local_kcol(matrix.kcol(), matrix.kcol() + offset + 1) ;
+
+      std::cout << "local size value receive by " << my_rank << " is " << local_values.size() << std::endl ;
+      std::cout << "local cols value receive by " << my_rank << " is " << local_cols.size() << std::endl ;
+      std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol.size() << std::endl ;
+
       // SEND MATRIX
       for (int i=1; i<nb_proc;++i)
       {
