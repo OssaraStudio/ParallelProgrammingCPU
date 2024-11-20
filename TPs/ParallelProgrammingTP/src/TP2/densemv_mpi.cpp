@@ -109,12 +109,14 @@ int main(int argc, char** argv)
     for(std::size_t i=0;i<nrows;++i)
       x[i] = i+1 ;
 
+          
+    size_t local_size = nrows/nb_proc ;
+    int rest = nrows%nb_proc ;
+
     {
 
       // SEND GLOBAL SIZE
-      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;      
-      size_t local_size = nrows/nb_proc ;
-      int rest = nrows%nb_proc ;
+      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;
       size_t offset = 0 ;
       {
         size_t local_nrows = local_size ;
@@ -143,6 +145,7 @@ int main(int argc, char** argv)
     {
       // BROAD CAST VECTOR X
       /* ... */
+      MPI_Bcast(x.data(), nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD) ; 
     }
 
     {
@@ -159,11 +162,14 @@ int main(int argc, char** argv)
     // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
     DenseMatrix local_matrix ;
     std::size_t local_nrows ;
+    std::vector<double> total(nb_proc);
 
     {
       // EXTRACT LOCAL DATA FROM MASTER PROC
 
       // COMPUTE LOCAL SIZE
+      local_nrows = local_size ;
+      if(0 < rest) local_nrows ++ ;
 
       // EXTRACT LOCAL MATRIX DATA
     }
@@ -171,6 +177,36 @@ int main(int argc, char** argv)
     std::vector<double> local_y(local_nrows);
     {
       // compute parallel SPMV
+      double const* matrix_ptr = matrix.data() ;
+      for(std::size_t irow =0; irow<local_nrows;++irow)
+      {
+        double value = 0 ;
+        for(std::size_t jcol =0; jcol<nrows;++jcol)
+        {
+        value += matrix_ptr[jcol]*x[jcol] ;
+        }
+        local_y[irow] = value ;
+        matrix_ptr += nrows ;
+      }
+      double normy = PPTP::norm2(local_y) ;
+      std::cout<<"rank = 0 "<<"||local_y||="<<normy<<std::endl ;
+      total[0] = normy ;
+    }
+
+    {
+        MPI_Status status ;
+        for(int i=1; i<nb_proc; ++i)
+        {
+            size_t local_nrows = local_size ;
+            if(i < rest) local_nrows ++ ;
+            std::vector<double> local_y(local_nrows);
+
+            MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 102 ,MPI_COMM_WORLD, &status) ;
+
+            double normy = PPTP::norm2(local_y) ;
+            std::cout<<"rank = " << i << " "<<"||local_y||="<<normy<<std::endl ;
+            total[i] = normy ;
+        }
     }
   }
   else
@@ -196,20 +232,33 @@ int main(int argc, char** argv)
       // RECV MATRIX DATA
       local_matrix.init(local_nrows*nrows) ;
       MPI_Recv(local_matrix.data(), local_nrows*nrows, MPI_DOUBLE, 0, 101, MPI_COMM_WORLD, &status) ;
-      double const* matrix_ptr = local_matrix.data() ;
-      std::cout << "local matrix value receive by " << my_rank << " is " << matrix_ptr[0] << std::endl ;
     }
 
     std::vector<double> x;
     {
       // BROAD CAST VECTOR X
       /* ... */
+      x.resize(nrows) ;
+      MPI_Bcast(x.data(), nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD) ; 
     }
 
-    std::vector<double> local_y(local_nrows);
+    std::vector<double> local_y(local_nrows) ;
     {
       // compute parallel SPMV
+      double const* matrix_ptr = local_matrix.data() ;
+      for(std::size_t irow =0; irow<local_nrows;++irow)
+      {
+        double value = 0 ;
+        for(std::size_t jcol =0; jcol<nrows;++jcol)
+        {
+        value += matrix_ptr[jcol]*x[jcol] ;
+        }
+        local_y[irow] = value ;
+        matrix_ptr += nrows ;
+      }
     }
+
+    MPI_Send(local_y.data(), local_nrows, MPI_DOUBLE, 0, 102, MPI_COMM_WORLD) ;
 
   }
   timer.printInfo() ;
