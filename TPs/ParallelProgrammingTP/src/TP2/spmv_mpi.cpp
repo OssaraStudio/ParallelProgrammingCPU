@@ -127,7 +127,7 @@ int main(int argc, char** argv)
         offset += local_nrows ;
       }
 
-      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 7, MPI_COMM_WORLD) ;
+      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;
 
       // SEND MATRIX
       for (int i=1; i<nb_proc;++i)
@@ -251,7 +251,7 @@ int main(int argc, char** argv)
     size_t nrows ;
 
     {
-      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 7, MPI_COMM_WORLD) ;
+      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;
       // RECV LOCAL SIZE
 
       MPI_Recv(&local_values_size, 1, MPI_UNSIGNED_LONG, 0, 0, MPI_COMM_WORLD, &status) ;
@@ -293,7 +293,7 @@ int main(int argc, char** argv)
       }
     }
 
-    MPI_Send(local_y.data(), local_kcol_size, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
+    // MPI_Send(local_y.data(), local_kcol_size, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
 
   }
   timer.printInfo() ;
