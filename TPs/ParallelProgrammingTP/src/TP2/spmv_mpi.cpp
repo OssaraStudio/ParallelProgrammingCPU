@@ -278,20 +278,20 @@ int main(int argc, char** argv)
       MPI_Bcast(x.data(), nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD) ; 
     }
 
-    // std::vector<double> local_y(local_kcol_size) ;
-    // {
-    //   // compute parallel SPMV
+    std::vector<double> local_y(local_kcol_size-1) ;
+    {
+      // compute parallel SPMV
 
-    // for(std::size_t irow =0; irow<local_kcol_size;++irow)
-    //   {
-    //     double value = 0 ;
-    //     for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
-    //     {
-    //       value += local_values[k]*x[local_cols[k]] ;
-    //     }
-    //     local_y[irow] = value ;
-    //   }
-    // }
+    for(std::size_t irow =0; irow<local_kcol_size-1;++irow)
+      {
+        double value = 0 ;
+        for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
+        {
+          value += local_values[k]*x[local_cols[k]] ;
+        }
+        local_y[irow] = value ;
+      }
+    }
 
     // MPI_Send(local_y.data(), local_kcol_size, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
 
