@@ -121,6 +121,10 @@ int main(int argc, char** argv)
         std::cout<<" SEND MATRIX DATA to proc "<<i<<std::endl ;
 
         // SEND LOCAL SIZE to PROC I
+        size_t local_size = nrows/nb_proc ;
+        if(i < nrows%nb_proc) local_size++ ;
+        MPI_Send(&local_size, 1, MPI_UNSIGNED_LONG, i, 100, MPI_COMM_WORLD) ;
+        std::cout << "send local size = " << local_size << " to " << i << std::endl ;
 
         // SEND MATRIX DATA
       }
@@ -166,6 +170,7 @@ int main(int argc, char** argv)
     DenseMatrix local_matrix ;
     std::size_t nrows ;
     std::size_t local_nrows ;
+    MPI_Status status;
 
     {
       // RECV DATA FROM MASTER PROC
@@ -175,6 +180,8 @@ int main(int argc, char** argv)
       std::cout << "global size value receive by " << my_rank << " is " << nrows << std::endl ;
 
       // RECV LOCAL SIZE
+      MPI_Recv(&local_nrows, 1, MPI_UNSIGNED_LONG, 0, 100, MPI_COMM_WORLD, &status) ;
+      std::cout << "local size value receive by " << my_rank << " is " << local_nrows << std::endl ;
 
       // RECV MATRIX DATA
     }
