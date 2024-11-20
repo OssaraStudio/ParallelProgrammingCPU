@@ -123,6 +123,7 @@ int main(int argc, char** argv)
       
       // SEND GLOBAL SIZE
       MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;
+      std::cout << "Truc de dingue" << matrix.m_kcol.size() << std::endl;
       // size_t offset = 0 ;
       {
         size_t local_nrows = local_size ;
