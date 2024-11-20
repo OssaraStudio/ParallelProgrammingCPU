@@ -208,6 +208,9 @@ int main(int argc, char** argv)
             total[i] = normy ;
         }
     }
+    double last = 0;
+    for(int i=0; i<nb_proc; ++i) last+= total[i];
+    std::cout<<"||y||="<<normy<<std::endl ;
   }
   else
   {
