@@ -131,7 +131,7 @@ int main(int argc, char** argv)
       std::vector<double> local_values ;
       std::vector<int> local_cols ;
       std::vector<int> local_kcol ;
-      std::cout << *(matrix.kcol() + offset) << std::endl ;
+      std::cout << *(matrix.values() + *(matrix.kcol() + offset)) << std::endl ;
       for (int i=1; i<nb_proc;++i)
       {
         std::cout<<" SEND MATRIX DATA to proc "<<i<<std::endl ;
