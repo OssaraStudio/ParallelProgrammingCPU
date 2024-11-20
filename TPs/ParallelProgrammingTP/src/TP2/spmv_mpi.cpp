@@ -288,7 +288,7 @@ int main(int argc, char** argv)
         for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
         {
           // value += local_values[k]*x[local_cols[k]] ;
-          std::cout << " resultat = " << local_values[k] << std::endl ;
+          std::cout << " resultat = " << local_cols[k] << std::endl ;
         }
         local_y[irow] = value ;
       }
