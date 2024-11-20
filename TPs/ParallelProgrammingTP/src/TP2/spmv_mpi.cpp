@@ -291,6 +291,7 @@ int main(int argc, char** argv)
         }
         local_y[irow] = value ;
       }
+      std::cout << " resultat = " << local_y[0] << std::endl ;
     }
 
     // MPI_Send(local_y.data(), local_kcol_size, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
