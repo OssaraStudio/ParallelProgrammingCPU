@@ -112,6 +112,7 @@ int main(int argc, char** argv)
     {
 
       // SEND GLOBAL SIZE
+      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;
 
 
       // SEND MATRIX
@@ -170,6 +171,8 @@ int main(int argc, char** argv)
       // RECV DATA FROM MASTER PROC
 
       // RECV GLOBAL SIZE
+      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;
+      std::cout << "global size value receive by " << my_rank << " is " << nrows << std::endl ;
 
       // RECV LOCAL SIZE
 
