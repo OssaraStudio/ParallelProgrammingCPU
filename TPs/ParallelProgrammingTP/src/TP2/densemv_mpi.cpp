@@ -213,5 +213,6 @@ int main(int argc, char** argv)
 
   }
   timer.printInfo() ;
+  MPI_Finalize() ;
   return 0 ;
 }
