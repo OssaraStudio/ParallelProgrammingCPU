@@ -128,9 +128,6 @@ int main(int argc, char** argv)
       }
 
       // SEND MATRIX
-      std::vector<double> local_values ;
-      std::vector<int> local_cols ;
-      std::vector<int> local_kcol ;
       for (int i=1; i<nb_proc;++i)
       {
         std::cout<<" SEND MATRIX DATA to proc "<<i<<std::endl ;
@@ -142,9 +139,9 @@ int main(int argc, char** argv)
         size_t begin = offset ;        
         offset += local_nrows ;
 
-        local_values(matrix.values() + *(matrix.kcol() + begin), matrix.values() + *(matrix.kcol() + offset)) ;
-        local_cols(matrix.cols() + *(matrix.kcol() + begin), matrix.cols() + *(matrix.kcol() + offset)) ;
-        local_kcol(matrix.kcol() + begin, matrix.kcol() + offset + 1) ;
+        std::vector<double> local_values(matrix.values() + *(matrix.kcol() + begin), matrix.values() + *(matrix.kcol() + offset)) ;
+        std::vector<int> local_cols(matrix.cols() + *(matrix.kcol() + begin), matrix.cols() + *(matrix.kcol() + offset)) ;
+        std::vector<int> local_kcol(matrix.kcol() + begin, matrix.kcol() + offset + 1) ;
 
         // SEND LOCAL SIZE to PROC I
 
