@@ -162,9 +162,9 @@ int main(int argc, char** argv)
 
         // SEND MATRIX DATA
 
-        // MPI_Send(local_values.data(), local_values.size(), MPI_DOUBLE, i, 0, MPI_COMM_WORLD) ;
-        // MPI_Send(local_cols.data(), local_cols.size(), MPI_INT, i, 1, MPI_COMM_WORLD) ;
-        // MPI_Send(local_kcol.data(), local_kcol.size(), MPI_INT, i, 2, MPI_COMM_WORLD) ;
+        MPI_Send(local_values.data(), local_values.size(), MPI_DOUBLE, i, 3, MPI_COMM_WORLD) ;
+        MPI_Send(local_cols.data(), local_cols.size(), MPI_INT, i, 4, MPI_COMM_WORLD) ;
+        MPI_Send(local_kcol.data(), local_kcol.size(), MPI_INT, i, 5, MPI_COMM_WORLD) ;
       }
     }
 
@@ -189,6 +189,9 @@ int main(int argc, char** argv)
     size_t local_values_size ;
     size_t local_cols_size ;
     size_t local_kcol_size ; 
+    std::vector<double> local_values ;
+    std::vector<int> local_cols ;
+    std::vector<int> local_kcol ;
 
     {
       // RECV LOCAL SIZE
@@ -199,6 +202,14 @@ int main(int argc, char** argv)
       std::cout << "local size value receive by " << my_rank << " is " << local_values_size << std::endl ;
       std::cout << "local cols value receive by " << my_rank << " is " << local_cols_size << std::endl ;
       std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol_size << std::endl ;
+
+      // RECV MATRIX DATA
+      local_values.resize(local_values_size) ;
+      MPI_Recv(local_values.data(), local_values_size, MPI_DOUBLE, 0, 3, MPI_COMM_WORLD, &status) ;
+      local_cols.resize(local_cols_size) ;
+      MPI_Recv(local_cols.data(), local_cols_size, MPI_INT, 0, 4, MPI_COMM_WORLD, &status) ;
+      local_kcol.resize(local_kcol_size) ;
+      MPI_Recv(local_kcol.data(), local_kcol_size, MPI_INT, 0, 5, MPI_COMM_WORLD, &status) ;
     }
 
   }
