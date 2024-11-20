@@ -156,9 +156,9 @@ int main(int argc, char** argv)
 
         // SEND MATRIX DATA
 
-        MPI_Send(local_values.data(), local_values.size(), MPI_DOUBLE, i, 3, MPI_COMM_WORLD) ;
-        MPI_Send(local_cols.data(), local_cols.size(), MPI_INT, i, 4, MPI_COMM_WORLD) ;
-        MPI_Send(local_kcol.data(), local_kcol.size(), MPI_INT, i, 5, MPI_COMM_WORLD) ;
+        MPI_Send(local_values.data(), local_values_size, MPI_DOUBLE, i, 3, MPI_COMM_WORLD) ;
+        MPI_Send(local_cols.data(), local_cols_size, MPI_INT, i, 4, MPI_COMM_WORLD) ;
+        MPI_Send(local_kcol.data(), local_kcol_size, MPI_INT, i, 5, MPI_COMM_WORLD) ;
       }
     }
 
@@ -264,8 +264,10 @@ int main(int argc, char** argv)
       // RECV MATRIX DATA
       local_values.resize(local_values_size) ;
       MPI_Recv(local_values.data(), local_values_size, MPI_DOUBLE, 0, 3, MPI_COMM_WORLD, &status) ;
+
       local_cols.resize(local_cols_size) ;
       MPI_Recv(local_cols.data(), local_cols_size, MPI_INT, 0, 4, MPI_COMM_WORLD, &status) ;
+      
       local_kcol.resize(local_kcol_size) ;
       MPI_Recv(local_kcol.data(), local_kcol_size, MPI_INT, 0, 5, MPI_COMM_WORLD, &status) ;
     }
