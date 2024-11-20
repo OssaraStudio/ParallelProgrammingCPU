@@ -142,9 +142,9 @@ int main(int argc, char** argv)
         size_t begin = offset ;        
         offset += local_nrows ;
 
-        local_values(matrix.values().begin() + matrix.kcol()[begin], matrix.values().begin() + matrix.kcol()[offset]) ;
-        local_cols(matrix.cols().begin() + matrix.kcol()[begin], matrix.cols().begin() + matrix.kcol()[offset]) ;
-        local_kcol(matrix.kcol().begin() + begin, matrix.kcol().begin() + offset + 1) ;
+        local_values(matrix.values() + *(matrix.kcol() + begin), matrix.values() + *(matrix.kcol() + offset)) ;
+        local_cols(matrix.cols() + *(matrix.kcol() + begin), matrix.cols() + *(matrix.kcol() + offset)) ;
+        local_kcol(matrix.kcol() + begin, matrix.kcol() + offset + 1) ;
 
         // SEND LOCAL SIZE to PROC I
 
