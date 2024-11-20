@@ -127,6 +127,8 @@ int main(int argc, char** argv)
         offset += local_nrows ;
       }
 
+      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 7, MPI_COMM_WORLD) ;
+
       // SEND MATRIX
       for (int i=1; i<nb_proc;++i)
       {
@@ -245,8 +247,10 @@ int main(int argc, char** argv)
     std::vector<double> local_values ;
     std::vector<int> local_cols ;
     std::vector<int> local_kcol ;
+    size_t nrows ;
 
     {
+      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 7, MPI_COMM_WORLD) ;
       // RECV LOCAL SIZE
 
       MPI_Recv(&local_values_size, 1, MPI_UNSIGNED_LONG, 0, 0, MPI_COMM_WORLD, &status) ;
