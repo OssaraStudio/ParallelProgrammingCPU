@@ -84,6 +84,9 @@ class CSRMatrix
     {
       assert(x.size()>=m_nrows) ;
       assert(y.size()>=m_nrows) ;
+      std::cout << "m_ values = " << m_values.size() << "\n";
+      std::cout << "m_cols = " << m_cols.size() << "\n";
+      std::cout << "m_kcol = " << m_kcol.size() << "\n";
       for(std::size_t irow =0; irow<m_nrows;++irow)
       {
         double value = 0 ;
