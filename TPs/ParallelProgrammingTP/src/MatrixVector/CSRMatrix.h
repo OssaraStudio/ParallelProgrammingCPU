@@ -87,9 +87,6 @@ class CSRMatrix
       for(std::size_t irow =0; irow<m_nrows;++irow)
       {
         double value = 0 ;
-        std::cout << "kcol size = " << m_kcol.size() << std::endl;
-        std::cout << "values size = " << m_values.size() << std::endl;
-        std::cout << "cols size = " << m_cols.size() << std::endl;
         for( int k = m_kcol[irow]; k < m_kcol[irow+1];++k)
         {
           value += m_values[k]*x[m_cols[k]] ;
