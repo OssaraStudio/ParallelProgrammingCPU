@@ -120,18 +120,17 @@ int main(int argc, char** argv)
     int rest = nrows%nb_proc ;
 
     {
-      
-      // SEND GLOBAL SIZE
-      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;
-      std::cout << "boom = " << matrix.kcol().size() << std::endl;
-      // size_t offset = 0 ;
+      size_t offset = 0 ;
       {
         size_t local_nrows = local_size ;
         if(0 < rest) local_nrows ++ ;
-        // offset += local_size*nrows ;
+        offset += local_nrows ;
       }
 
       // SEND MATRIX
+      std::vector<double> local_values ;
+      std::vector<int> local_cols ;
+      std::vector<int> local_kcol ;
       for (int i=1; i<nb_proc;++i)
       {
         std::cout<<" SEND MATRIX DATA to proc "<<i<<std::endl ;
@@ -139,12 +138,26 @@ int main(int argc, char** argv)
         // SEND LOCAL SIZE to PROC I
         size_t local_nrows = local_size ;
         if(i < rest) local_nrows ++ ;
-        MPI_Send(&local_nrows, 1, MPI_UNSIGNED_LONG, i, 100, MPI_COMM_WORLD) ;
-        std::cout << "send local size = " << local_nrows << " to " << i << std::endl ;
+
+        size_t begin = offset ;        
+        offset += local_nrows ;
+
+        local_values(matrix.values().begin() + matrix.kcol()[begin], matrix.values().begin() + matrix.kcol()[offset]) ;
+        local_cols(matrix.cols().begin() + matrix.kcol()[begin], matrix.cols().begin() + matrix.kcol()[offset]) ;
+        local_kcol(matrix.kcol().begin() + begin, matrix.kcol().begin() + offset + 1) ;
+
+        // SEND LOCAL SIZE to PROC I
+
+        MPI_Send(&local_values.size(), 1, MPI_UNSIGNED_LONG, i, 0, MPI_COMM_WORLD) ;
+        MPI_Send(&local_cols.size(), 1, MPI_UNSIGNED_LONG, i, 1, MPI_COMM_WORLD) ;
+        MPI_Send(&local_kcol.size(), 1, MPI_UNSIGNED_LONG, i, 2, MPI_COMM_WORLD) ;
+        
 
         // SEND MATRIX DATA
-        // MPI_Send(matrix.data()+offset, local_nrows*nrows, MPI_DOUBLE, i, 101, MPI_COMM_WORLD) ;
-        // offset += local_nrows*nrows ;
+
+        // MPI_Send(local_values.data(), local_values.size(), MPI_DOUBLE, i, 0, MPI_COMM_WORLD) ;
+        // MPI_Send(local_cols.data(), local_cols.size(), MPI_INT, i, 1, MPI_COMM_WORLD) ;
+        // MPI_Send(local_kcol.data(), local_kcol.size(), MPI_INT, i, 2, MPI_COMM_WORLD) ;
       }
     }
 
@@ -164,6 +177,22 @@ int main(int argc, char** argv)
   }
   else
   {
+
+    MPI_Status status ;
+    size_t local_values_size ;
+    size_t local_cols_size ;
+    size_t local_kcol_size ; 
+
+    {
+      // RECV LOCAL SIZE
+
+      MPI_Recv(&local_values_size, 1, MPI_UNSIGNED_LONG, 0, 0, MPI_COMM_WORLD, &status) ;
+      MPI_Recv(&local_cols_size, 1, MPI_UNSIGNED_LONG, 0, 1, MPI_COMM_WORLD, &status) ;
+      MPI_Recv(&local_kcol_size, 1, MPI_UNSIGNED_LONG, 0, 2, MPI_COMM_WORLD, &status) ;
+      std::cout << "local size value receive by " << my_rank << " is " << local_values_size << std::endl ;
+      std::cout << "local cols value receive by " << my_rank << " is " << local_cols_size << std::endl ;
+      std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol_size << std::endl ;
+    }
 
   }
   timer.printInfo() ;
