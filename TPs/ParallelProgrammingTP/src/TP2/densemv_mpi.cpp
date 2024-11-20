@@ -210,7 +210,7 @@ int main(int argc, char** argv)
     }
     double last = 0;
     for(int i=0; i<nb_proc; ++i) last+= total[i];
-    std::cout<<"||y||="<<normy<<std::endl ;
+    std::cout<<"||y||="<<last<<std::endl ;
   }
   else
   {
