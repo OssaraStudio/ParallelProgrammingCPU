@@ -162,7 +162,7 @@ int main(int argc, char** argv)
     // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
     DenseMatrix local_matrix ;
     std::size_t local_nrows ;
-    std::vector<double> total(nb_proc);
+    std::vector<double> fuse_y(nrows) ;
 
     {
       // EXTRACT LOCAL DATA FROM MASTER PROC
@@ -188,10 +188,8 @@ int main(int argc, char** argv)
         local_y[irow] = value ;
         matrix_ptr += nrows ;
       }
-      double normy = PPTP::norm2(local_y) ;
-      std::cout<<"rank = 0 "<<"||local_y||="<<normy<<std::endl ;
-      total[0] = normy ;
     }
+    fuse_y = local_y ;
 
     {
         MPI_Status status ;
@@ -202,15 +200,12 @@ int main(int argc, char** argv)
             std::vector<double> local_y(local_nrows);
 
             MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 102 ,MPI_COMM_WORLD, &status) ;
-
-            double normy = PPTP::norm2(local_y) ;
-            std::cout<<"rank = " << i << " "<<"||local_y||="<<normy<<std::endl ;
-            total[i] = normy ;
+            fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end());
         }
     }
-    double last = 0;
-    for(int i=0; i<nb_proc; ++i) last+= total[i];
-    std::cout<<"||y||="<<last<<std::endl ;
+
+    double normy = PPTP::norm2(fuse_y) ;
+    std::cout<<"||y||="<<normy<<std::endl ;
   }
   else
   {
@@ -260,8 +255,7 @@ int main(int argc, char** argv)
         matrix_ptr += nrows ;
       }
     }
-    double normy = PPTP::norm2(local_y) ;
-    std::cout<<"avant envoie rank = " << my_rank << " "<<"||local_y||="<<normy<<std::endl ;
+
     MPI_Send(local_y.data(), local_nrows, MPI_DOUBLE, 0, 102, MPI_COMM_WORLD) ;
 
   }
