@@ -196,7 +196,7 @@ int main(int argc, char** argv)
       // RECV MATRIX DATA
       local_matrix.init(local_nrows*nrows) ;
       MPI_Recv(local_matrix.data(), local_nrows*nrows, MPI_DOUBLE, 0, 101, MPI_COMM_WORLD, &status) ;
-      double const* matrix_ptr = local_matrix.data()
+      double const* matrix_ptr = local_matrix.data() ;
       std::cout << "local matrix value receive by " << my_rank << " is " << matrix_ptr[0] << std::endl ;
     }
 
