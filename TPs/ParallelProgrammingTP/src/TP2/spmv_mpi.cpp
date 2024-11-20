@@ -145,9 +145,9 @@ int main(int argc, char** argv)
 
         // SEND LOCAL SIZE to PROC I
 
-        MPI_Send(&local_values.size(), 1, MPI_UNSIGNED_LONG, i, 0, MPI_COMM_WORLD) ;
-        MPI_Send(&local_cols.size(), 1, MPI_UNSIGNED_LONG, i, 1, MPI_COMM_WORLD) ;
-        MPI_Send(&local_kcol.size(), 1, MPI_UNSIGNED_LONG, i, 2, MPI_COMM_WORLD) ;
+        MPI_Send(local_values.size(), 1, MPI_UNSIGNED_LONG, i, 0, MPI_COMM_WORLD) ;
+        MPI_Send(local_cols.size(), 1, MPI_UNSIGNED_LONG, i, 1, MPI_COMM_WORLD) ;
+        MPI_Send(local_kcol.size(), 1, MPI_UNSIGNED_LONG, i, 2, MPI_COMM_WORLD) ;
         
 
         // SEND MATRIX DATA
