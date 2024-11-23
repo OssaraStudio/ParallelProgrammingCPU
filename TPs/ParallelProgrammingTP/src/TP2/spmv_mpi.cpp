@@ -186,42 +186,47 @@ int main(int argc, char** argv)
     // double normy2 = PPTP::norm2(y2) ;
     // std::cout<<"||y2||="<<normy2<<std::endl ;
 
-    // // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
-    // std::size_t local_nrows ;
-    // std::vector<double> fuse_y(nrows) ;
+    // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
+    std::size_t local_nrows ;
+    std::vector<double> fuse_y(nrows) ;
 
-    // {
-    //   // EXTRACT LOCAL DATA FROM MASTER PROC
+    {
+      // EXTRACT LOCAL DATA FROM MASTER PROC
 
-    //   // COMPUTE LOCAL SIZE
-    //   local_nrows = local_size ;
-    //   if(0 < rest) local_nrows ++ ;
+      // COMPUTE LOCAL SIZE
+      local_nrows = local_size ;
+      if(0 < rest) local_nrows ++ ;
 
       
-    //   std::vector<double> local_values(matrix.values(), matrix.values() + *(matrix.kcol() + local_nrows)) ;
-    //   std::vector<int> local_cols(matrix.cols(), matrix.cols() + *(matrix.kcol() + local_nrows)) ;
-    //   std::vector<int> local_kcol(matrix.kcol(), matrix.kcol() + local_nrows + 1) ;
+      std::vector<double> local_values(matrix.values(), matrix.values() + *(matrix.kcol() + local_nrows)) ;
+      std::vector<int> local_cols(matrix.cols(), matrix.cols() + *(matrix.kcol() + local_nrows)) ;
+      std::vector<int> local_kcol(matrix.kcol(), matrix.kcol() + local_nrows + 1) ;
 
-    //   std::cout << "local size value receive by " << my_rank << " is " << local_values.size() << std::endl ;
-    //   std::cout << "local cols value receive by " << my_rank << " is " << local_cols.size() << std::endl ;
-    //   std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol.size() << std::endl ;
+      std::cout << "local size value receive by " << my_rank << " is " << local_values.size() << std::endl ;
+      std::cout << "local cols value receive by " << my_rank << " is " << local_cols.size() << std::endl ;
+      std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol.size() << std::endl ;
 
-    //   // EXTRACT LOCAL MATRIX DATA
+      // EXTRACT LOCAL MATRIX DATA
     
 
-    // std::vector<double> local_y(local_kcol.size());
-    // {
-    //   // compute parallel SPMV
-    //   for(std::size_t irow =0; irow<local_kcol.size();++irow)
-    //   {
-    //     double value = 0 ;
-    //     for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
-    //     {
-    //       value += local_values[k]*x[local_cols[k]] ;
-    //     }
-    //     local_y[irow] = value ;
-    //   }
-    // }
+    std::vector<double> local_y(local_kcol.size());
+    {
+      // compute parallel SPMV
+      for(std::size_t irow =0; irow<local_kcol.size();++irow)
+      {
+        double value = 0 ;
+        for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
+        {
+          value += local_values[k-local_kcol[0]]*x[local_cols[k-local_kcol[0]]] ;
+        }
+        local_y[irow] = value ;
+      }
+    }
+
+    double r = 0 ;
+    for(int i=0; i<local_y.size(); ++i)
+      r+= local_y[i] ;
+    std::cout << "local_y = " << r << std::endl ;    
     // fuse_y = local_y ;
 
     // {
@@ -239,7 +244,7 @@ int main(int argc, char** argv)
 
     //   double normy = PPTP::norm2(fuse_y) ;
     //   std::cout<<"||y3||="<<normy<<std::endl ;
-    // }
+    }
 
   }
   else
