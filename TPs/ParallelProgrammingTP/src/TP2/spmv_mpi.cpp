@@ -182,60 +182,60 @@ int main(int argc, char** argv)
     double normy2 = PPTP::norm2(y2) ;
     std::cout<<"||y2||="<<normy2<<std::endl ;
 
-    // // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
-    // std::size_t local_nrows ;
-    // std::vector<double> fuse_y(nrows) ;
+    // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
+    std::size_t local_nrows ;
+    std::vector<double> fuse_y(nrows) ;
 
-    // {
-    //   // EXTRACT LOCAL DATA FROM MASTER PROC
+    {
+      // EXTRACT LOCAL DATA FROM MASTER PROC
 
-    //   // COMPUTE LOCAL SIZE
-    //   local_nrows = local_size ;
-    //   if(0 < rest) local_nrows ++ ;
+      // COMPUTE LOCAL SIZE
+      local_nrows = local_size ;
+      if(0 < rest) local_nrows ++ ;
 
       
-    //   std::vector<double> local_values(matrix.values(), matrix.values() + *(matrix.kcol() + local_nrows)) ;
-    //   std::vector<int> local_cols(matrix.cols(), matrix.cols() + *(matrix.kcol() + local_nrows)) ;
-    //   std::vector<int> local_kcol(matrix.kcol(), matrix.kcol() + local_nrows + 1) ;
+      std::vector<double> local_values(matrix.values(), matrix.values() + *(matrix.kcol() + local_nrows)) ;
+      std::vector<int> local_cols(matrix.cols(), matrix.cols() + *(matrix.kcol() + local_nrows)) ;
+      std::vector<int> local_kcol(matrix.kcol(), matrix.kcol() + local_nrows + 1) ;
 
-    //   std::cout << "local size value receive by " << my_rank << " is " << local_values.size() << std::endl ;
-    //   std::cout << "local cols value receive by " << my_rank << " is " << local_cols.size() << std::endl ;
-    //   std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol.size() << std::endl ;
+      std::cout << "local size value receive by " << my_rank << " is " << local_values.size() << std::endl ;
+      std::cout << "local cols value receive by " << my_rank << " is " << local_cols.size() << std::endl ;
+      std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol.size() << std::endl ;
 
-    //   // EXTRACT LOCAL MATRIX DATA
+      // EXTRACT LOCAL MATRIX DATA
     
 
-    // std::vector<double> local_y(local_kcol.size());
-    // {
-    //   // compute parallel SPMV
-    //   for(std::size_t irow =0; irow<local_kcol.size();++irow)
-    //   {
-    //     double value = 0 ;
-    //     for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
-    //     {
-    //       value += local_values[k]*x[local_cols[k]] ;
-    //     }
-    //     local_y[irow] = value ;
-    //   }
-    // }
-    // fuse_y = local_y ;
+    std::vector<double> local_y(local_kcol.size());
+    {
+      // compute parallel SPMV
+      for(std::size_t irow =0; irow<local_kcol.size();++irow)
+      {
+        double value = 0 ;
+        for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
+        {
+          value += local_values[k]*x[local_cols[k]] ;
+        }
+        local_y[irow] = value ;
+      }
+    }
+    fuse_y = local_y ;
 
-    // {
-    //     MPI_Status status ;
-    //     for(int i=1; i<nb_proc; ++i)
-    //     {
-    //         size_t local_nrows = local_size ;
-    //         if(i < rest) local_nrows ++ ;
-    //         std::vector<double> local_y(local_nrows);
+    {
+        MPI_Status status ;
+        for(int i=1; i<nb_proc; ++i)
+        {
+            size_t local_nrows = local_size ;
+            if(i < rest) local_nrows ++ ;
+            std::vector<double> local_y(local_nrows);
 
-    //         MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6 ,MPI_COMM_WORLD, &status) ;
-    //         fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end());
-    //     }
-    // }
+            MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6 ,MPI_COMM_WORLD, &status) ;
+            fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end());
+        }
+    }
 
-    //   double normy = PPTP::norm2(fuse_y) ;
-    //   std::cout<<"||y||="<<normy<<std::endl ;
-    // }
+      double normy = PPTP::norm2(fuse_y) ;
+      std::cout<<"||y||="<<normy<<std::endl ;
+    }
 
   }
   else
@@ -270,8 +270,8 @@ int main(int argc, char** argv)
       
       local_kcol.resize(local_kcol_size) ;
       MPI_Recv(local_kcol.data(), local_kcol_size, MPI_INT, 0, 5, MPI_COMM_WORLD, &status) ;
-      for(int i=0; i<local_kcol_size; ++i)
-        std::cout << " resultat of rank " << my_rank << " = " << local_kcol[i] << std::endl ;
+      // for(int i=0; i<local_kcol_size; ++i)
+      //   std::cout << " resultat of rank " << my_rank << " = " << local_kcol[i] << std::endl ;
     }
 
     std::vector<double> x;
@@ -291,13 +291,13 @@ int main(int argc, char** argv)
         double value = 0 ;
         for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
         {
-          // value += local_values[k]*x[local_cols[k]] ;
+          value += local_values[k-local_kcol[0]]*x[local_cols[k-local_kcol[0]]] ;
         }
         local_y[irow] = value ;
       }
     }
 
-    // MPI_Send(local_y.data(), local_kcol_size, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
+    MPI_Send(local_y.data(), local_kcol_size, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
 
   }
   timer.printInfo() ;
