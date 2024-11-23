@@ -194,8 +194,8 @@ int main(int argc, char** argv)
       if(0 < rest) local_nrows ++ ;
     
 
+    std::vector<double> local_y(local_nrows);
     {
-      std::vector<double> local_y(local_nrows);
       // compute parallel SPMV
       for(std::size_t irow =0; irow<local_nrows;++irow)
       {
@@ -206,22 +206,20 @@ int main(int argc, char** argv)
         }
         local_y[irow] = value ;
       }
-      fuse_y = local_y ;
     }
+    fuse_y = local_y ;
 
-    
-    std::vector<double> local_y;
     {
-        MPI_Status status ;
-        for(int i=1; i<nb_proc; ++i)
-        {
-          size_t local_nrows = local_size ;
-          if(i < rest) local_nrows ++ ;
-          local_y.resize(local_nrows) ;
+      MPI_Status status ;
+      for(int i=1; i<nb_proc; ++i)
+      {
+        size_t local_nrows = local_size ;
+        if(i < rest) local_nrows ++ ;
+        std::vector<double> local_y(local_nrows) ;
 
-          MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
-          // fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
-        }
+        MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
+        // fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
+      }
     }
     for(int i=0; i<fuse_y.size(); ++i)
       std::cout << i << " - " << fuse_y[i] << std::endl ;
