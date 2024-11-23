@@ -217,7 +217,7 @@ int main(int argc, char** argv)
         double value = 0 ;
         for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
         {
-          value += matrix.values()[k-local_kcol[0]]*x[matrix.cols()[k-local_kcol[0]]] ;
+          value += matrix.values()[k]*x[matrix.cols()[k]] ;
         }
         local_y[irow] = value ;
       }
