@@ -194,8 +194,8 @@ int main(int argc, char** argv)
       if(0 < rest) local_nrows ++ ;
     
 
-    std::vector<double> local_y(local_nrows);
     {
+      std::vector<double> local_y(local_nrows);
       // compute parallel SPMV
       for(std::size_t irow =0; irow<local_nrows;++irow)
       {
@@ -206,8 +206,8 @@ int main(int argc, char** argv)
         }
         local_y[irow] = value ;
       }
+      fuse_y = local_y ;
     }
-    fuse_y = local_y ;
 
     
     std::vector<double> local_y;
