@@ -218,13 +218,12 @@ int main(int argc, char** argv)
             if(i < rest) local_nrows ++ ;
             std::vector<double> local_y(local_nrows) ;
 
-            // MPI_Recv(local_y.data(), local_nrows+1, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
-            // fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
+            MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
+            fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
+            for(int i=0; i<fuse_y.size(); ++i)
+              std::cout << i << " - " << fuse_y[i] << std::endl ;
         }
     }
-
-    for(int i=0; i<fuse_y.size(); ++i)
-      std::cout << fuse_y[i] << std::endl ;
 
       // double normy = PPTP::norm2(fuse_y) ;
       // std::cout<<"||y3||="<<normy<<std::endl ;
@@ -287,7 +286,6 @@ int main(int argc, char** argv)
         local_y[irow] = value ;
       }
     }
-    std::cout << "size local_y" << local_y.size() << std::endl ;
     MPI_Send(local_y.data(), local_kcol_size, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
 
   }
