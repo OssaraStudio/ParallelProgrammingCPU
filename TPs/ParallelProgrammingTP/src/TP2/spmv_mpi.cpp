@@ -223,8 +223,11 @@ int main(int argc, char** argv)
         }
     }
 
-      double normy = PPTP::norm2(fuse_y) ;
-      std::cout<<"||y3||="<<normy<<std::endl ;
+    for(int i=0; i<fuse_y.size(); ++i)
+      std::cout << fuse_y[i] << std::endl ;
+
+      // double normy = PPTP::norm2(fuse_y) ;
+      // std::cout<<"||y3||="<<normy<<std::endl ;
     }
 
   }
