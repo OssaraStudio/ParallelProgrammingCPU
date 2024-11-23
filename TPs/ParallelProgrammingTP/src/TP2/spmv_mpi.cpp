@@ -209,10 +209,10 @@ int main(int argc, char** argv)
       // EXTRACT LOCAL MATRIX DATA
     
 
-    std::vector<double> local_y(local_kcol.size());
+    std::vector<double> local_y(local_kcol.size()-1);
     {
       // compute parallel SPMV
-      for(std::size_t irow =0; irow<local_kcol.size();++irow)
+      for(std::size_t irow =0; irow<local_kcol.size()-1;++irow)
       {
         double value = 0 ;
         for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
