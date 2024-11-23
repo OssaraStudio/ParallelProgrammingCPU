@@ -215,7 +215,7 @@ int main(int argc, char** argv)
       for(std::size_t irow =0; irow<local_nrows;++irow)
       {
         double value = 0 ;
-        for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
+        for( int k = matrix.kcol()[irow]; k < matrix.kcol()[irow+1];++k)
         {
           value += matrix.values()[k]*x[matrix.cols()[k]] ;
         }
