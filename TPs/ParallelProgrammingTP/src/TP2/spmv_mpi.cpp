@@ -209,13 +209,15 @@ int main(int argc, char** argv)
     }
     fuse_y = local_y ;
 
+    
+    std::vector<double> local_y;
     {
         MPI_Status status ;
         for(int i=1; i<nb_proc; ++i)
         {
           size_t local_nrows = local_size ;
           if(i < rest) local_nrows ++ ;
-          std::vector<double> local_y(local_nrows) ;
+          local_y.resize(local_nrows) ;
 
           MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
           // fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
