@@ -220,7 +220,6 @@ int main(int argc, char** argv)
 
             // MPI_Recv(local_y.data(), local_nrows+1, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
             // fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
-            std::cout << "top  = " << local_nrows+1 << std::endl ;
         }
     }
 
@@ -288,6 +287,7 @@ int main(int argc, char** argv)
         local_y[irow] = value ;
       }
     }
+    std::cout << "size local_y" << local_y.size() << std::endl ;
     MPI_Send(local_y.data(), local_kcol_size, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
 
   }
