@@ -207,7 +207,6 @@ int main(int argc, char** argv)
         local_y[irow] = value ;
       }
     }
-    std::cout << "top 0 = " << local_nrows << std::endl ;
     fuse_y = local_y ;
 
     {
@@ -216,14 +215,14 @@ int main(int argc, char** argv)
         {
             size_t local_nrows = local_size ;
             if(i < rest) local_nrows ++ ;
-            std::vector<double> local_y(local_nrows) ;
+            std::vector<double> z(local_nrows) ;
 
-            MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
-            fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
-            for(int i=0; i<fuse_y.size(); ++i)
-              std::cout << i << " - " << fuse_y[i] << std::endl ;
+            MPI_Recv(z.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
+            fuse_y.insert(fuse_y.end(), z.begin(), z.end()) ;
         }
     }
+    for(int i=0; i<fuse_y.size(); ++i)
+      std::cout << i << " - " << fuse_y[i] << std::endl ;
 
       // double normy = PPTP::norm2(fuse_y) ;
       // std::cout<<"||y3||="<<normy<<std::endl ;
