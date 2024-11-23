@@ -213,13 +213,12 @@ int main(int argc, char** argv)
         MPI_Status status ;
         for(int i=1; i<nb_proc; ++i)
         {
-            size_t local_nrows = local_size ;
-            if(i < rest) local_nrows ++ ;
-            std::vector<double> local_y(local_nrows) ;
-            std::cout << " yes = " << local_nrows << std::endl ;
+          size_t local_nrows = local_size ;
+          if(i < rest) local_nrows ++ ;
+          std::vector<double> local_y(local_nrows) ;
 
-            // MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
-            // fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
+          MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
+          // fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
         }
     }
     for(int i=0; i<fuse_y.size(); ++i)
