@@ -172,19 +172,15 @@ int main(int argc, char** argv)
       Timer::Sentry sentry(timer,"SpMV") ;
       matrix.mult(x,y) ;
     }
-    double r = 0 ;
-    for(int i=0; i<y.size(); ++i)
-      r+= y[i] ;
-    std::cout << "y = " << r << std::endl ;
-    // double normy = PPTP::norm2(y) ;
-    // std::cout<<"||y||="<<normy<<std::endl ;
+    double normy = PPTP::norm2(y) ;
+    std::cout<<"||y||="<<normy<<std::endl ;
 
-    // {
-    //   Timer::Sentry sentry(timer,"OMPSpMV") ;
-    //   matrix.mult(x,y2) ;
-    // }
-    // double normy2 = PPTP::norm2(y2) ;
-    // std::cout<<"||y2||="<<normy2<<std::endl ;
+    {
+      Timer::Sentry sentry(timer,"OMPSpMV") ;
+      matrix.mult(x,y2) ;
+    }
+    double normy2 = PPTP::norm2(y2) ;
+    std::cout<<"||y2||="<<normy2<<std::endl ;
 
     // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
     std::size_t local_nrows ;
