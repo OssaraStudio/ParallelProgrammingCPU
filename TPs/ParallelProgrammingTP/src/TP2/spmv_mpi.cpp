@@ -226,7 +226,7 @@ int main(int argc, char** argv)
     double r = 0 ;
     for(int i=0; i<local_y.size(); ++i)
       r+= local_y[i] ;
-    std::cout << "local_y = " << r << std::endl ;    
+    std::cout << "local_y 0 = " << r << std::endl ;    
     // fuse_y = local_y ;
 
     // {
