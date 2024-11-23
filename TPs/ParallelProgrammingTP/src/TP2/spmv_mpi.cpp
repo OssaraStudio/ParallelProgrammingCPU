@@ -270,8 +270,8 @@ int main(int argc, char** argv)
       
       local_kcol.resize(local_kcol_size) ;
       MPI_Recv(local_kcol.data(), local_kcol_size, MPI_INT, 0, 5, MPI_COMM_WORLD, &status) ;
-      for(int i=0; i<local_values_size; ++i)
-        std::cout << " resultat of rank " << my_rank << " = " << local_values[i] << std::endl ;
+      for(int i=0; i<local_cols_size; ++i)
+        std::cout << " resultat of rank " << my_rank << " = " << local_cols[i] << std::endl ;
     }
 
     std::vector<double> x;
