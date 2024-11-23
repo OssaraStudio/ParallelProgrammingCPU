@@ -216,9 +216,9 @@ int main(int argc, char** argv)
             size_t local_nrows = local_size ;
             if(i < rest) local_nrows ++ ;
             std::vector<double> local_y(local_nrows) ;
+            std::cout << " yes = " << local_nrows << std::endl ;
 
             MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
-            std::cout << " yes = " << local_nrows << std::endl ;
             // fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
         }
     }
