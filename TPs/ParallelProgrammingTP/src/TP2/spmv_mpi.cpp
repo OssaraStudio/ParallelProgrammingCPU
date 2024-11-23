@@ -198,26 +198,26 @@ int main(int argc, char** argv)
       if(0 < rest) local_nrows ++ ;
 
       
-      std::vector<double> local_values(matrix.values(), matrix.values() + *(matrix.kcol() + local_nrows)) ;
-      std::vector<int> local_cols(matrix.cols(), matrix.cols() + *(matrix.kcol() + local_nrows)) ;
-      std::vector<int> local_kcol(matrix.kcol(), matrix.kcol() + local_nrows + 1) ;
+      // std::vector<double> local_values(matrix.values(), matrix.values() + *(matrix.kcol() + local_nrows)) ;
+      // std::vector<int> local_cols(matrix.cols(), matrix.cols() + *(matrix.kcol() + local_nrows)) ;
+      // std::vector<int> local_kcol(matrix.kcol(), matrix.kcol() + local_nrows + 1) ;
 
-      std::cout << "local size value receive by " << my_rank << " is " << local_values.size() << std::endl ;
-      std::cout << "local cols value receive by " << my_rank << " is " << local_cols.size() << std::endl ;
-      std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol.size() << std::endl ;
+      // std::cout << "local size value receive by " << my_rank << " is " << local_values.size() << std::endl ;
+      // std::cout << "local cols value receive by " << my_rank << " is " << local_cols.size() << std::endl ;
+      // std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol.size() << std::endl ;
 
       // EXTRACT LOCAL MATRIX DATA
     
 
-    std::vector<double> local_y(local_kcol.size()-1);
+    std::vector<double> local_y(local_nrows);
     {
       // compute parallel SPMV
-      for(std::size_t irow =0; irow<local_kcol.size()-1;++irow)
+      for(std::size_t irow =0; irow<local_nrows;++irow)
       {
         double value = 0 ;
         for( int k = local_kcol[irow]; k < local_kcol[irow+1];++k)
         {
-          value += local_values[k-local_kcol[0]]*x[local_cols[k-local_kcol[0]]] ;
+          value += matrix.values()[k-local_kcol[0]]*x[matrix.cols()[k-local_kcol[0]]] ;
         }
         local_y[irow] = value ;
       }
