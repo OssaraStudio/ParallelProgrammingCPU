@@ -170,10 +170,36 @@ namespace PPTP
         assert(y.size()>=m_nrows) ;
 
         std::size_t nb_task = (m_nrows+m_chunk_size-1)/m_chunk_size ;
+        
+        #pragma omp parallel
         {
-
+            #pragma omp single
             {
               // TODO TASK OPENMP 2D
+              for(std::size_t id = 0; id < nb_task; ++id)
+              {
+                for(std::size_t task_id = 0; task_id < nb_task; ++task_id)
+                {
+                  std::size_t start_row = task_id * m_chunk_size;
+                  std::size_t end_row = std::min(start_row + m_chunk_size, m_nrows);
+
+                  #pragma omp task firstprivate(start_row, end_row)
+                  {
+                    double const* matrix_ptr = m_values.data() ;
+                    matrix_ptr += (start_row*m_nrows) ;
+                    for(std::size_t irow =start_row; irow<end_row; ++irow)
+                    {
+                      double value = 0 ;
+                      for(std::size_t jcol =start_row; jcol<end_row;++jcol)
+                      {
+                        value += matrix_ptr[jcol]*x[jcol] ;
+                      }
+                      y[irow] = value ;
+                      matrix_ptr += m_nrows ;
+                    }
+                  }
+                }
+              }
             }
         }
       }
