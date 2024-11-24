@@ -160,6 +160,8 @@ namespace PPTP
               {
                 std::size_t start_row = task_id * m_chunk_size;
                 std::size_t end_row = std::min(start_row + m_chunk_size, m_nrows);
+                std::cout << "start_row = " << start_row << std::endl ;
+                std::cout << "end_row = " << end_row << std::endl ;
 
                 #pragma omp task firstprivate(start_row, end_row)
                 {
