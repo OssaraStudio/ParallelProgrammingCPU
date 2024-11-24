@@ -139,8 +139,6 @@ namespace PPTP
             //TODO TASK OPENMP
             #pragma omp single
             {
-              
-              std::cout << "single get thread number = " << omp_get_thread_num() << std::endl ;
               for(std::size_t task_id = 0; task_id < nb_task; ++task_id)
               {
                 std::size_t start_row = task_id * m_chunk_size;
@@ -148,8 +146,6 @@ namespace PPTP
 
                 #pragma omp task firstprivate(start_row, end_row)
                 {
-                  sleep(task_id) ;
-                  std::cout << "get thread " << task_id <<  " number = " << omp_get_thread_num() << std::endl ;
                   double const* matrix_ptr = m_values.data() ;
                   matrix_ptr += (start_row*m_nrows) ;
                   for(std::size_t irow =start_row; irow<end_row; ++irow)
