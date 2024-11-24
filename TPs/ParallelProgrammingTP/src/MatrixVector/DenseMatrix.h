@@ -257,6 +257,7 @@ namespace PPTP
                             for(auto irow=r.rows().begin(); irow<r.rows().end(); ++irow)
                             {
                               double const* matrix_ptr = m_values.data() ;
+                              matrix_ptr += (irow*m_nrows) ;
                               double value = 0 ;
                               for(auto jcol =r.cols().begin(); jcol<r.cols().end();++jcol)
                               {
