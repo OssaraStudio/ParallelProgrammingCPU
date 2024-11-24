@@ -261,8 +261,8 @@ namespace PPTP
                               double value = 0 ;
                               for(auto jcol =r.cols().begin(); jcol<r.cols().end();++jcol)
                               {
-                                sleep(0.001*(irow*m_nrows + jcol));
-                                std::cout << "irow*m_nrows + jcol = " << irow*m_nrows + jcol << std::endl ;
+                                if((irow*m_nrows + jcol) > 9990)
+                                  std::cout << "irow*m_nrows + jcol = " << irow*m_nrows + jcol << std::endl ;
                                 value += m_values[irow*m_nrows + jcol]*x[jcol] ;
                               }
                               y[irow] = value ;
