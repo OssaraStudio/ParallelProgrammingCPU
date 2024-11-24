@@ -49,7 +49,7 @@ int main(int argc, char** argv)
     #pragma omp parallel
     {
       int id = omp_get_thread_num() ;
-      int nb_threads = omp_get_num_procs() ;
+      int nb_threads = omp_get_num_threads() ;
       sleep(id) ;
       std::cout<<"Hello world ("<<id<<","<<nb_threads<<")"<<std::endl ;
     }
