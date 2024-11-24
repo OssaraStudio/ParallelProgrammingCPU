@@ -190,11 +190,12 @@ namespace PPTP
                 {
                   for (std::size_t irow = start_row; irow < end_row; ++irow)
                   {
-                    double const* matrix_ptr = m_values.data();
+                    double const* matrix_ptr = m_values.data() ;
+                    matrix_ptr += (irow*m_nrows) ;
                     double value = 0;
                     for (std::size_t jcol = start_col; jcol < end_col; ++jcol)
                     {
-                      value += matrix_ptr[irow * m_nrows + jcol]*x[jcol];
+                      value += matrix_ptr[jcol]*x[jcol];
                     }
                     y[irow] += value;
                   }
