@@ -8,6 +8,9 @@
 #ifndef SRC_MATRIXVECTOR_DENSEMATRIX_H_
 #define SRC_MATRIXVECTOR_DENSEMATRIX_H_
 
+#include "tbb/tbb.h"
+#include "omp.h"
+
 namespace PPTP
 {
 
@@ -224,8 +227,8 @@ namespace PPTP
         assert(y.size()>=m_nrows) ;
         {
             // TODO TBB WITH RANGE
-          parallel_for(blocked_range<size_t>(0, m_nrows),
-                          [&](blocked_range<size_t> const& r)
+          tbb::parallel_for(tbb::blocked_range<size_t>(0, m_nrows),
+                          [&](tbb::blocked_range<size_t> const& r)
                           {
                             for(auto irow=r.begin(); irow<r.end(); ++irow)
                             {
