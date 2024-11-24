@@ -183,16 +183,22 @@ namespace PPTP
                 std::size_t start_row = row_task_id * m_chunk_size;
                 std::size_t end_row = std::min(start_row + m_chunk_size, m_nrows);
 
-                #pragma omp task firstprivate(start_row, end_row)
+                std::size_t start_col = col_task_id * m_chunk_size;
+                std::size_t end_col = std::min(start_col + m_chunk_size, m_nrows);
+
+                #pragma omp task firstprivate(start_row, end_row, start_col, end_col)
                 {
+                  double const* matrix_ptr = m_values.data() ;
+                  matrix_ptr += (start_row*m_nrows) ;
                   for (std::size_t irow = start_row; irow < end_row; ++irow)
                   {
                     double value = 0;
-                    for (std::size_t jcol = start_row; jcol < end_row; ++jcol)
+                    for (std::size_t jcol = start_col; jcol < end_col; ++jcol)
                     {
-                      value += m_values[irow * m_nrows + jcol] * x[jcol];
+                      value += matrix_ptr[jcol]*x[jcol];
                     }
-                    y[irow] += value;
+                    y[irow] = value ;
+                    matrix_ptr += m_nrows ;
                   }
                 }
               }
