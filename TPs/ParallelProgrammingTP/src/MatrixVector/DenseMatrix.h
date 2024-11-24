@@ -157,6 +157,7 @@ namespace PPTP
                       value += matrix_ptr[jcol]*x[jcol] ;
                     }
                     y[irow] = value ;
+                    sleep(1) ;
                     std::cout << irow << " - " << y[irow] << std::endl ;
                     matrix_ptr += m_nrows ;
                   }
