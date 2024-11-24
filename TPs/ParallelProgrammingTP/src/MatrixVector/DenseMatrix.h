@@ -128,40 +128,16 @@ namespace PPTP
       }
 
       void omptaskmult(VectorType const& x, VectorType& y) const
-{
-    assert(x.size() >= m_nrows);
-    assert(y.size() >= m_nrows);
-    double const* matrix_ptr = m_values.data() ;
-    std::size_t nb_task = (m_nrows + m_chunk_size - 1) / m_chunk_size;
+      {
+        assert(x.size()>=m_nrows) ;
+        assert(y.size()>=m_nrows) ;
 
-    #pragma omp parallel
-    {
-        #pragma omp single
+        std::size_t nb_task = (m_nrows+m_chunk_size-1)/m_chunk_size ;
         {
-            for (std::size_t task_id = 0; task_id < nb_task; ++task_id)
-            {
-                // Define the range of rows for this task
-                std::size_t start_row = task_id * m_chunk_size;
-                std::size_t end_row = std::min(start_row + m_chunk_size, m_nrows);
+            //TODO TASK OPENMP
 
-                // Create a task for this range
-                #pragma omp task firstprivate(start_row, end_row)
-                {
-                  
-                        double value = 0;
-                    for (std::size_t i = start_row; i < end_row; ++i)
-                    {
-                        
-                      value += matrix_ptr[i] * x[i]; // Assuming m_data is the matrix
-                        
-                        y[i] = value;
-                    }
-                }
-            }
-        } // End single region
-    } // End parallel region
-}
-
+        }
+      }
 
       void omptilemult(VectorType const& x, VectorType& y) const
       {
@@ -169,6 +145,9 @@ namespace PPTP
         assert(y.size()>=m_nrows) ;
 
         std::size_t nb_task = (m_nrows+m_chunk_size-1)/m_chunk_size ;
+        std::cout << "nb_task = " << nb_task << std::endl ;
+        std:cout << "m_chunk_size = " << m_chunk_size << std::endl ;
+        std::cout << "m_nrows = " << m_nrows << std::endl ;
         {
 
             {
