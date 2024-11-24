@@ -224,8 +224,8 @@ namespace PPTP
         assert(y.size()>=m_nrows) ;
         {
             // TODO TBB WITH RANGE
-          tbb::parallel_for(tbb::blocked_range<size_t>(0, m_nrows),
-                          [&](tbb::blocked_range<size_t> const& r)
+          parallel_for(blocked_range<size_t>(0, m_nrows),
+                          [&](blocked_range<size_t> const& r)
                           {
                             for(auto irow=r.begin(); irow<r.end(); ++irow)
                             {
