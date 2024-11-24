@@ -133,6 +133,7 @@ namespace PPTP
         assert(y.size()>=m_nrows) ;
 
         std::size_t nb_task = (m_nrows+m_chunk_size-1)/m_chunk_size ;
+        std::cout << "get thread number = " << omp_get_num_threads() << std::endl ;
 
         #pragma omp parallel
         {
