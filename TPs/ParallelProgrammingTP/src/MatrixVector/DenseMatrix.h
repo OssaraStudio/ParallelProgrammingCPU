@@ -251,7 +251,6 @@ namespace PPTP
         assert(y.size()>=m_nrows) ;
         {
                 // TODO TBB RANGE 2D
-                std::vector<int> z(m_nrows) ;
                 tbb::parallel_for(tbb::blocked_range2d<size_t>(0, m_nrows, 0, m_nrows),
                           [&](tbb::blocked_range2d<size_t> const& r)
                           {
@@ -263,7 +262,6 @@ namespace PPTP
                               // matrix_ptr += (irow*m_nrows) ;
                               for(auto jcol =r.cols().begin(); jcol<r.cols().end();++jcol)
                               {
-                                z[irow] ++ ;
                                 value += m_values[irow*m_nrows + jcol]*x[jcol] ;
                               }
                               y[irow] = value ;
