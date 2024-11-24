@@ -150,7 +150,7 @@ namespace PPTP
                 {
                   // int cpt = 0 ;
                   
-                  matrix_ptr += start_row*m_nrows ;
+                  matrix_ptr += (start_row*m_nrows) ;
                   for(std::size_t irow =start_row-1; irow<end_row; ++irow)
                   {
                     double value = 0 ;
