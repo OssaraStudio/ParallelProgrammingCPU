@@ -259,7 +259,7 @@ namespace PPTP
                               // double const* matrix_ptr = m_values.data() ;
                               // matrix_ptr += (irow*m_nrows) ;
                               double value = 0 ;
-                              sleep(0.01*irow) ;
+                              sleep(irow) ;
                               std::cout << "irow*m_nrows = " << irow*m_nrows << std::endl ;
                               for(auto jcol =r.cols().begin(); jcol<r.cols().end();++jcol)
                               {
