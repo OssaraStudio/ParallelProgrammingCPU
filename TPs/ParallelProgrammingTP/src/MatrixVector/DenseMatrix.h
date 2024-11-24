@@ -195,7 +195,7 @@ namespace PPTP
                     double value = 0;
                     for (std::size_t jcol = start_col; jcol < end_col; ++jcol)
                     {
-                      value += matrix_ptr[jcol]*0;
+                      value += matrix_ptr[jcol]*x[jcol];
                     }
                     y[irow] += value;
                     matrix_ptr += end_col ;
