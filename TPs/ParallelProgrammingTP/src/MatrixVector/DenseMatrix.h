@@ -146,7 +146,7 @@ namespace PPTP
 
         std::size_t nb_task = (m_nrows+m_chunk_size-1)/m_chunk_size ;
         std::cout << "nb_task = " << nb_task << std::endl ;
-        std:cout << "m_chunk_size = " << m_chunk_size << std::endl ;
+        std::cout << "m_chunk_size = " << m_chunk_size << std::endl ;
         std::cout << "m_nrows = " << m_nrows << std::endl ;
         {
 
