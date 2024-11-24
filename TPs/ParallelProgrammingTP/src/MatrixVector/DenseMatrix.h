@@ -254,7 +254,6 @@ namespace PPTP
                 tbb::parallel_for(tbb::blocked_range2d<size_t>(0, m_nrows, 0, m_nrows),
                           [&](tbb::blocked_range2d<size_t> const& r)
                           {
-                            
                             double value = 0 ;
                             for(auto irow=r.rows().begin(); irow<r.rows().end(); ++irow)
                             {
