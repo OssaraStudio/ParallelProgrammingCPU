@@ -131,7 +131,7 @@ namespace PPTP
 {
     assert(x.size() >= m_nrows);
     assert(y.size() >= m_nrows);
-    // double const* matrix_ptr = m_values.data() ;
+    double const* matrix_ptr = m_values.data() ;
     std::size_t nb_task = (m_nrows + m_chunk_size - 1) / m_chunk_size;
 
     #pragma omp parallel
@@ -147,13 +147,13 @@ namespace PPTP
                 // Create a task for this range
                 #pragma omp task firstprivate(start_row, end_row)
                 {
+                  
+                        double value = 0;
                     for (std::size_t i = start_row; i < end_row; ++i)
                     {
-                        double value = 0;
-                        for (std::size_t j = 0; j < x.size(); ++j)
-                        {
-                            value += m_values[i][j] * x[j]; // Assuming m_data is the matrix
-                        }
+                        
+                      value += matrix_ptr[i] * x[i]; // Assuming m_data is the matrix
+                        
                         y[i] = value;
                     }
                 }
