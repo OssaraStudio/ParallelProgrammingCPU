@@ -249,8 +249,8 @@ namespace PPTP
       {
         assert(x.size()>=m_nrows) ;
         assert(y.size()>=m_nrows) ;
-        // for(int i=0; i<y.size(); ++i)
-        //   y[i] = 0 ;
+        for(int i=0; i<y.size(); ++i)
+          y[i] = 0 ;
         {
                 // TODO TBB RANGE 2D
                 tbb::parallel_for(tbb::blocked_range2d<size_t>(0, m_nrows, 0, m_nrows),
