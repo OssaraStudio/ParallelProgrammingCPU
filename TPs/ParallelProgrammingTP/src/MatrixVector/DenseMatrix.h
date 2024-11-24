@@ -254,16 +254,14 @@ namespace PPTP
                 tbb::parallel_for(tbb::blocked_range2d<size_t>(0, m_nrows, 0, m_nrows),
                           [&](tbb::blocked_range2d<size_t> const& r)
                           {
-                            double value = 0 ;
                             for(auto irow=r.rows().begin(); irow<r.rows().end(); ++irow)
                             {
-                              // double const* matrix_ptr = m_values.data() ;
-                              // matrix_ptr += (irow*m_nrows) ;
+                              double const* matrix_ptr = m_values.data() ;
+                              matrix_ptr += (irow*m_nrows) ;
                               for(auto jcol =r.cols().begin(); jcol<r.cols().end();++jcol)
                               {
-                                value += m_values[irow*m_nrows + jcol]*x[jcol] ;
+                                y[irow] += matrix_ptr[irow*m_nrows + jcol]*x[jcol] ;
                               }
-                              y[irow] = value ;
                             }
                           });
         }
