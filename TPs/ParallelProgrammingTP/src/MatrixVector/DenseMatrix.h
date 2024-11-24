@@ -188,10 +188,10 @@ namespace PPTP
 
                 #pragma omp task firstprivate(start_row, end_row, start_col, end_col)
                 {
-                  double const* matrix_ptr = m_values.data() ;
-                  matrix_ptr += (start_row*m_nrows) ;
                   for (std::size_t irow = start_row; irow < end_row; ++irow)
-                  {
+                  {                    
+                    double const* matrix_ptr = m_values.data() ;
+                    matrix_ptr += (irow*m_nrows) ;
                     double value = 0;
                     for (std::size_t jcol = start_col; jcol < end_col; ++jcol)
                     {
