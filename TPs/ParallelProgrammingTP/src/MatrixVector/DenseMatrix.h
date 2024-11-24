@@ -251,23 +251,31 @@ namespace PPTP
         assert(y.size()>=m_nrows) ;
         {
                 // TODO TBB RANGE 2D
+                std::vector<int> z(m_nrows) ;
                 tbb::parallel_for(tbb::blocked_range2d<size_t>(0, m_nrows, 0, m_nrows),
                           [&](tbb::blocked_range2d<size_t> const& r)
                           {
+                            int cpt = 0 ;
                             for(auto irow=r.rows().begin(); irow<r.rows().end(); ++irow)
                             {
                               // double const* matrix_ptr = m_values.data() ;
                               // matrix_ptr += (irow*m_nrows) ;
+                              if((irow*m_nrows) == 0){
+                                cpt ++ ;
+                                std::cout << cpt << "\n" ;
+                              }
                               double value = 0 ;
-                              sleep(irow) ;
-                              std::cout << "irow*m_nrows = " << irow*m_nrows << std::endl ;
+                              z[irow] = 0 ;
                               for(auto jcol =r.cols().begin(); jcol<r.cols().end();++jcol)
                               {
+                                z[irow] ++ ;
                                 value += m_values[irow*m_nrows + jcol]*x[jcol] ;
                               }
                               y[irow] = value ;
                             }
                           });
+                          for(int i= 0; i<z.size(); ++i)
+                            std::cout << z[i] << std::endl ;
         }
       }
 
