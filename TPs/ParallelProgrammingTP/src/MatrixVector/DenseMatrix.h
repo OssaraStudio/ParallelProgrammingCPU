@@ -198,6 +198,7 @@ namespace PPTP
                       value += matrix_ptr[jcol]*x[jcol];
                     }
                     y[irow] += value;
+                    matrix_ptr += end_col ;
                   }
                 }
               }
