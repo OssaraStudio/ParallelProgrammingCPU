@@ -113,7 +113,6 @@ namespace PPTP
             value += matrix_ptr[jcol]*x[jcol] ;
           }
           y[irow] = value ;
-          std::cout << irow << " - " << y[irow] << std::endl ;
           matrix_ptr += m_nrows ;
         }
       }
@@ -150,6 +149,7 @@ namespace PPTP
                 #pragma omp task firstprivate(start_row, end_row)
                 {
                   int cpt = 0 ;
+                  matrix_ptr += (start_row*m_nrows) ;
                   for(std::size_t irow =start_row; irow<end_row; ++irow)
                   {
                     double value = 0 ;
