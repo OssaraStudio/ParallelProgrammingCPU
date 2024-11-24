@@ -148,6 +148,7 @@ namespace PPTP
 
                 #pragma omp task firstprivate(start_row, end_row)
                 {
+                  sleep(task_id) ;
                   std::cout << "get thread " << task_id <<  " number = " << omp_get_thread_num() << std::endl ;
                   double const* matrix_ptr = m_values.data() ;
                   matrix_ptr += (start_row*m_nrows) ;
