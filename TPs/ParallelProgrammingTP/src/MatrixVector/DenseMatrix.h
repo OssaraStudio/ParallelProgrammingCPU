@@ -224,6 +224,21 @@ namespace PPTP
         assert(y.size()>=m_nrows) ;
         {
             // TODO TBB WITH RANGE
+          tbb::parallel_for(tbb::blocked_range<size_t>(0, m_nrows),
+                          [&](tbb::blocked_range<size_t> const& r)
+                          {
+                            for(auto irow=r.begin(); irow<r.end(); ++irow)
+                            {
+                              double const* matrix_ptr = m_values.data() ;
+                              matrix_ptr += (irow*m_nrows) ;
+                              double value = 0 ;
+                              for(std::size_t jcol =0; jcol<m_nrows;++jcol)
+                              {
+                                value += matrix_ptr[jcol]*x[jcol] ;
+                              }
+                              y[irow] = value ;
+                            }
+                          });
         }
       }
 
