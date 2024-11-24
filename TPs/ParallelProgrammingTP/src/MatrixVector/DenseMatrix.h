@@ -133,9 +133,6 @@ namespace PPTP
         assert(y.size()>=m_nrows) ;
 
         std::size_t nb_task = (m_nrows+m_chunk_size-1)/m_chunk_size ;
-        std::cout << "nb_task = " << nb_task << std::endl ;
-        std::cout << "m_chunk_size = " << m_chunk_size << std::endl ;
-        std::cout << "m_nrows = " << m_nrows << std::endl ;
         
         double const* matrix_ptr = m_values.data() ;
 
@@ -148,6 +145,9 @@ namespace PPTP
               {
                 std::size_t start_row = task_id * m_chunk_size;
                 std::size_t end_row = std::min(start_row + m_chunk_size, m_nrows);
+
+                std::cout << "start_row = " << start_row << std::endl ;
+                std::cout << "end_row = " << end_row << std::endl ;
 
                 #pragma omp task firstprivate(start_row, end_row)
                 {
