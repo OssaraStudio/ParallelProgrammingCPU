@@ -148,10 +148,33 @@ namespace PPTP
         std::cout << "nb_task = " << nb_task << std::endl ;
         std::cout << "m_chunk_size = " << m_chunk_size << std::endl ;
         std::cout << "m_nrows = " << m_nrows << std::endl ;
-        {
+        
+        double const* matrix_ptr = m_values.data() ;
 
+        #pragma omp parallel
+        {
+            #pragma omp single
             {
               // TODO TASK OPENMP 2D
+              for(std::size_t task_id = 0; task_id < nb_task; ++task_id)
+              {
+                std::size_t start_row = task_id * m_chunk_size;
+                std::size_t end_row = std::min(start_row + m_chunk_size, m_nrows);
+
+                #pragma omp task firstprivate(start_row, end_row)
+                {
+                  for(std::size_t irow =start_row; irow<end_row; ++irow)
+                  {
+                    double value = 0 ;
+                    for(std::size_t jcol =0; jcol<m_nrows;++jcol)
+                    {
+                      value += matrix_ptr[jcol]*x[jcol] ;
+                    }
+                    y[irow] = value ;
+                    matrix_ptr += m_nrows ;
+                  }
+                }
+              }
             }
         }
       }
