@@ -16,9 +16,9 @@
 
 ### indiquer votre executable
 # MONPROG=/gext/jean-marc.gratien/ParallelProgrammingTP/bin/densemv_mpi.exe
-MONPROG=/gext/ossara.djaodoh/ParallelProgrammingTP/bin/densemv.exe
+MONPROG=/gext/ossara.djaodoh/CPUProject/ParallelProgrammingCPU/TPs/ParallelProgrammingTP/bin/densemv.exe
 ### indiquer votre fichier de donnees
-MYDATA=
+MYDATA=/gext/ossara.djaodoh/CPUProject/data
 
 
 ### en execution standand, rien a changer ci-apres
