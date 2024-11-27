@@ -27,6 +27,7 @@ echo DEBUT
 date
 
 NP=$(cat $OAR_NODE_FILE | wc -l)
+echo SUITE
 echo execution sur $NP coeurs
 echo sur les nodes $(cat $OAR_NODE_FILE)
 
