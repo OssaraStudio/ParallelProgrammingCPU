@@ -184,7 +184,6 @@ namespace PPTP
             {
               for (std::size_t col_task_id = 0; col_task_id < nb_task; ++col_task_id)
               {
-                std::cout << col_task_id << "\n" ;
                 std::size_t start_row = row_task_id * m_chunk_size ;
                 std::size_t end_row = std::min(start_row + m_chunk_size, m_nrows) ;
 
