@@ -151,7 +151,7 @@ int main(int argc, char** argv)
       std::vector<double> y(nrows);
       {
         Timer::Sentry sentry(timer,"OMPTileDenseMV") ;
-        // matrix.omptilemult(x,y) ;
+        matrix.omptilemult(x,y) ;
       }
       double normy = PPTP::norm2(y) ;
       std::cout<<"OMPTile ||y||="<<normy<<std::endl ;
