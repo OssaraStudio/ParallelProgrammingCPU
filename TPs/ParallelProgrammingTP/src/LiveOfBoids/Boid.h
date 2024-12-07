@@ -46,7 +46,7 @@ class Boid {
             std::vector<Boid> neighbors;
             for(auto& other: boids)
             {
-                if(this->m_position.euclidean_dist(other.m_position) < radius)
+                if((&other != this) && (this->m_position.euclidean_dist(other.m_position) < radius))
                 neighbors.push_back(other);
             }
             return neighbors;
