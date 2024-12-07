@@ -29,7 +29,7 @@ int main(int argc, char** argv)
         ("nb-threads",value<int>()->default_value(0), "nb threads")
         ("nrows",value<int>()->default_value(0), "matrix size")
         ("nx",value<int>()->default_value(0), "nx grid size")
-        ("chunk-size",value<int>()->default_value(1), "chunk size")
+        ("chunk-size",value<int>()->default_value(1), "chunk size");
     variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
     notify(vm);
