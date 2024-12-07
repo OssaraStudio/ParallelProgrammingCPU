@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     int nb_available_threads = omp_get_max_threads() ;
     std::cout<<"NB AVAILABLE_THREADS :"<<nb_available_threads<<std::endl ;
 
-    // using namespace PPTP ;
+    using namespace PPTP ;
 
     Timer timer ;
     BoidGenerator generator ;
