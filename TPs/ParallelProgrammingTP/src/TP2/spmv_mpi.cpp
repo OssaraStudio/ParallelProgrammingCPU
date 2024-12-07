@@ -220,9 +220,12 @@ int main(int argc, char** argv)
         }
       }
 
-      double normy = PPTP::norm2(fuse_y) ;
-      std::cout<<"||y3||="<<normy<<std::endl ;
+      
     }
+
+    timer.printInfo() ;
+    double normy = PPTP::norm2(fuse_y) ;
+    std::cout<<"||y3||="<<normy<<std::endl ;
 
   }
   else
@@ -285,7 +288,7 @@ int main(int argc, char** argv)
     MPI_Send(local_y.data(), local_kcol_size-1, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
 
   }
-  timer.printInfo() ;
+  
   MPI_Finalize() ;
   return 0 ;
 }
