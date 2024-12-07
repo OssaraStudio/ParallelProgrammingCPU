@@ -29,9 +29,9 @@ class BoidGenerator
 
         for (int i=0; i<nb; ++i)
         {
-            std::cout << i << "\n" ;
             auto angle = angle_space(eng);                    // Random direction
             auto speed = velocity_space(eng);                // Random speed
+            std::cout << random_x(eng) << "\n" ;
             boids.push_back(Boid(Vector2D{random_x(eng), random_y(eng)}, Vector2D{speed * std::cos(angle), speed * std::sin(angle)}));
         }
     };
