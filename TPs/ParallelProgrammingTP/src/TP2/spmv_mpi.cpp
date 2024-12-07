@@ -116,58 +116,6 @@ int main(int argc, char** argv)
     for(std::size_t i=0;i<nrows;++i)
       x[i] = i+1 ;
 
-    size_t local_size = nrows/nb_proc ;
-    int rest = nrows%nb_proc ;
-
-    {
-      size_t offset = 0 ;
-      {
-        size_t local_nrows = local_size ;
-        if(0 < rest) local_nrows ++ ;
-        offset += local_nrows ;
-      }
-
-      MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;
-
-      // SEND MATRIX
-      for (int i=1; i<nb_proc;++i)
-      {
-        // std::cout<<" SEND MATRIX DATA to proc "<<i<<std::endl ;
-
-        // SEND LOCAL SIZE to PROC I
-        size_t local_nrows = local_size ;
-        if(i < rest) local_nrows ++ ;
-
-        size_t begin = offset ;        
-        offset += local_nrows ;
-
-        std::vector<double> local_values(matrix.values() + *(matrix.kcol() + begin), matrix.values() + *(matrix.kcol() + offset)) ;
-        std::vector<int> local_cols(matrix.cols() + *(matrix.kcol() + begin), matrix.cols() + *(matrix.kcol() + offset)) ;
-        std::vector<int> local_kcol(matrix.kcol() + begin, matrix.kcol() + offset + 1) ;
-
-        // SEND LOCAL SIZE to PROC I
-        size_t local_values_size = local_values.size();
-        size_t local_cols_size = local_cols.size();
-        size_t local_kcol_size = local_kcol.size();
-        MPI_Send(&local_values_size, 1, MPI_UNSIGNED_LONG, i, 0, MPI_COMM_WORLD) ;
-        MPI_Send(&local_cols_size, 1, MPI_UNSIGNED_LONG, i, 1, MPI_COMM_WORLD) ;
-        MPI_Send(&local_kcol_size, 1, MPI_UNSIGNED_LONG, i, 2, MPI_COMM_WORLD) ;
-        
-
-        // SEND MATRIX DATA
-
-        MPI_Send(local_values.data(), local_values_size, MPI_DOUBLE, i, 3, MPI_COMM_WORLD) ;
-        MPI_Send(local_cols.data(), local_cols_size, MPI_INT, i, 4, MPI_COMM_WORLD) ;
-        MPI_Send(local_kcol.data(), local_kcol_size, MPI_INT, i, 5, MPI_COMM_WORLD) ;
-      }
-    }
-
-    {
-      // BROAD CAST VECTOR X
-      /* ... */
-      MPI_Bcast(x.data(), nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD) ; 
-    }
-
     {
       {
         Timer::Sentry sentry(timer,"SpMV") ;
@@ -176,54 +124,106 @@ int main(int argc, char** argv)
       double normy = PPTP::norm2(y) ;
       std::cout<<"||y||="<<normy<<std::endl ;
     }
-
+    
     {
-      // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
-      std::size_t local_nrows ;
-      std::vector<double> fuse_y(nrows) ;
-
-      Timer::Sentry sentry(timer,"MPISpMV") ;
-
       {
-        // EXTRACT LOCAL DATA FROM MASTER PROC
+        Timer::Sentry sentry(timer,"MPISpMV") ;
 
-        // COMPUTE LOCAL SIZE
-        local_nrows = local_size ;
-        if(0 < rest) local_nrows ++ ;
-      
-
-        std::vector<double> local_y(local_nrows);
-        {
-          // compute parallel SPMV
-          for(std::size_t irow =0; irow<local_nrows;++irow)
-          {
-            double value = 0 ;
-            for( int k = matrix.kcol()[irow]; k < matrix.kcol()[irow+1];++k)
-            {
-              value += matrix.values()[k]*x[matrix.cols()[k]] ;
-            }
-            local_y[irow] = value ;
-          }
-        }
-        fuse_y = local_y ;
+        size_t local_size = nrows/nb_proc ;
+        int rest = nrows%nb_proc ;
 
         {
-          MPI_Status status ;
-          for(int i=1; i<nb_proc; ++i)
+          size_t offset = 0 ;
           {
             size_t local_nrows = local_size ;
-            if(i < rest) local_nrows ++ ;
-            std::vector<double> local_y(local_nrows) ;
+            if(0 < rest) local_nrows ++ ;
+            offset += local_nrows ;
+          }
 
-            MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
-            fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
+          MPI_Bcast(&nrows, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD) ;
+
+          // SEND MATRIX
+          for (int i=1; i<nb_proc;++i)
+          {
+            // std::cout<<" SEND MATRIX DATA to proc "<<i<<std::endl ;
+
+            // SEND LOCAL SIZE to PROC I
+            size_t local_nrows = local_size ;
+            if(i < rest) local_nrows ++ ;
+
+            size_t begin = offset ;        
+            offset += local_nrows ;
+
+            std::vector<double> local_values(matrix.values() + *(matrix.kcol() + begin), matrix.values() + *(matrix.kcol() + offset)) ;
+            std::vector<int> local_cols(matrix.cols() + *(matrix.kcol() + begin), matrix.cols() + *(matrix.kcol() + offset)) ;
+            std::vector<int> local_kcol(matrix.kcol() + begin, matrix.kcol() + offset + 1) ;
+
+            // SEND LOCAL SIZE to PROC I
+            size_t local_values_size = local_values.size();
+            size_t local_cols_size = local_cols.size();
+            size_t local_kcol_size = local_kcol.size();
+            MPI_Send(&local_values_size, 1, MPI_UNSIGNED_LONG, i, 0, MPI_COMM_WORLD) ;
+            MPI_Send(&local_cols_size, 1, MPI_UNSIGNED_LONG, i, 1, MPI_COMM_WORLD) ;
+            MPI_Send(&local_kcol_size, 1, MPI_UNSIGNED_LONG, i, 2, MPI_COMM_WORLD) ;
+            
+
+            // SEND MATRIX DATA
+
+            MPI_Send(local_values.data(), local_values_size, MPI_DOUBLE, i, 3, MPI_COMM_WORLD) ;
+            MPI_Send(local_cols.data(), local_cols_size, MPI_INT, i, 4, MPI_COMM_WORLD) ;
+            MPI_Send(local_kcol.data(), local_kcol_size, MPI_INT, i, 5, MPI_COMM_WORLD) ;
           }
         }
 
-        double normy = PPTP::norm2(fuse_y) ;
-        std::cout<<"||y2||="<<normy<<std::endl ;
-      }
+        {
+          // BROAD CAST VECTOR X
+          /* ... */
+          MPI_Bcast(x.data(), nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD) ; 
+        }
 
+        {
+          // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
+          std::size_t local_nrows ;
+          {
+            // EXTRACT LOCAL DATA FROM MASTER PROC
+
+            // COMPUTE LOCAL SIZE
+            local_nrows = local_size ;
+            if(0 < rest) local_nrows ++ ;
+          
+
+            std::vector<double> local_y(local_nrows);
+            {
+              // compute parallel SPMV
+              for(std::size_t irow =0; irow<local_nrows;++irow)
+              {
+                double value = 0 ;
+                for( int k = matrix.kcol()[irow]; k < matrix.kcol()[irow+1];++k)
+                {
+                  value += matrix.values()[k]*x[matrix.cols()[k]] ;
+                }
+                local_y[irow] = value ;
+              }
+            }
+            y2 = local_y ;
+
+            {
+              MPI_Status status ;
+              for(int i=1; i<nb_proc; ++i)
+              {
+                size_t local_nrows = local_size ;
+                if(i < rest) local_nrows ++ ;
+                std::vector<double> local_y(local_nrows) ;
+
+                MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
+                y2.insert(y2.end(), local_y.begin(), local_y.end()) ;
+              }
+            }
+          }
+        }
+      }
+      double normy = PPTP::norm2(y2) ;
+      std::cout<<"||y2||="<<normy<<std::endl ;
     }
     timer.printInfo() ;
   }
@@ -283,8 +283,7 @@ int main(int argc, char** argv)
         local_y[irow] = value ;
       }
     }
-    std::cout << my_rank << "\n" ;
-    sleep(my_rank) ;
+    sleep(10) ;
     MPI_Send(local_y.data(), local_kcol_size-1, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
 
   }
