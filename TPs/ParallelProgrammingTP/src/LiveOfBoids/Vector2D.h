@@ -5,8 +5,8 @@
  *      Author: ossaradj
  */
 
-#ifndef SRC_MATRIXVECTOR_VECTOR_2D_H_
-#define SRC_MATRIXVECTOR_VECTOR_2D_H_
+#ifndef SRC_LIVEOFBOIDS_VECTOR_2D_H_
+#define SRC_LIVEOFBOIDS_VECTOR_2D_H_
 
 #include <iostream>
 #include <cmath>
@@ -100,4 +100,4 @@ class Vector2D
         float m_x, m_y;
 };
 
-#endif /* SRC_MATRIXVECTOR_VECTOR_2D_H_ */
+#endif /* SRC_LIVEOFBOIDS_VECTOR_2D_H_ */

@@ -20,6 +20,9 @@
 
 #include "Utils/Timer.h"
 
+#include "LiveOfBoids/Boid.h"
+#include "LiveOfBoids/BoidGenerator.h"
+
 int main(int argc, char** argv)
 {
     using namespace boost::program_options ;
@@ -29,6 +32,7 @@ int main(int argc, char** argv)
         ("nb-threads",value<int>()->default_value(0), "nb threads")
         ("nrows",value<int>()->default_value(0), "matrix size")
         ("nx",value<int>()->default_value(0), "nx grid size")
+        ("nb-boids",value<int>()->default_value(0), "number of boids")
         ("chunk-size",value<int>()->default_value(1), "chunk size");
     variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
@@ -53,8 +57,14 @@ int main(int argc, char** argv)
 
     // using namespace PPTP ;
 
-    // Timer timer ;
-    // int nx = vm["nx"].as<int>() ;
+    Timer timer ;
+    BoidGenerator generator ;
+    std::vector<Boid> boids;
+    
+    int nb = vm["nb-boids"].as<int>() ;
+    generator.generate(nb, boids) ;
+
+    std::cout << "size = " << boids.size() << "\n" ;
     
     
     // std::size_t nrows = matrix.nrows();
@@ -109,6 +119,6 @@ int main(int argc, char** argv)
     //   std::cout<<"TBBRange2DTile ||y||="<<normy<<std::endl ;
     // }
   
-//   timer.printInfo() ;
+  timer.printInfo() ;
   return 0 ;
 }
