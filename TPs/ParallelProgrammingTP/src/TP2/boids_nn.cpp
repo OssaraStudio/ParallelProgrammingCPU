@@ -59,8 +59,8 @@ int main(int argc, char** argv)
 
     Timer timer ;
     BoidGenerator generator ;
-    std::vector<Boid> boids;
-    float radius = 10.f
+    std::vector<Boid> boids ;
+    float radius = 10.f ;
     
     int nb = vm["nb-boids"].as<int>() ;
     generator.generate(nb, boids) ;
