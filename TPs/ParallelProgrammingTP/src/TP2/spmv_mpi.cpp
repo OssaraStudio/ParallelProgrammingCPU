@@ -169,64 +169,67 @@ int main(int argc, char** argv)
     }
 
     {
-      Timer::Sentry sentry(timer,"SpMV") ;
-      matrix.mult(x,y) ;
-    }
-    double normy = PPTP::norm2(y) ;
-    std::cout<<"||y||="<<normy<<std::endl ;
-
-    {
-      Timer::Sentry sentry(timer,"MPISpMV") ;
-      matrix.mult(x,y2) ;
+      {
+        Timer::Sentry sentry(timer,"SpMV") ;
+        matrix.mult(x,y) ;
+      }
+      double normy = PPTP::norm2(y) ;
+      std::cout<<"||y||="<<normy<<std::endl ;
     }
 
-    // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
-    std::size_t local_nrows ;
-    std::vector<double> fuse_y(nrows) ;
-
     {
-      // EXTRACT LOCAL DATA FROM MASTER PROC
-
-      // COMPUTE LOCAL SIZE
-      local_nrows = local_size ;
-      if(0 < rest) local_nrows ++ ;
-    
-
-      std::vector<double> local_y(local_nrows);
       {
-        // compute parallel SPMV
-        for(std::size_t irow =0; irow<local_nrows;++irow)
-        {
-          double value = 0 ;
-          for( int k = matrix.kcol()[irow]; k < matrix.kcol()[irow+1];++k)
-          {
-            value += matrix.values()[k]*x[matrix.cols()[k]] ;
-          }
-          local_y[irow] = value ;
-        }
-      }
-      fuse_y = local_y ;
-
-      {
-        MPI_Status status ;
-        for(int i=1; i<nb_proc; ++i)
-        {
-          size_t local_nrows = local_size ;
-          if(i < rest) local_nrows ++ ;
-          std::vector<double> local_y(local_nrows) ;
-
-          MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
-          fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
-        }
+        Timer::Sentry sentry(timer,"MPISpMV") ;
+        matrix.mult(x,y2) ;
       }
 
+      // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
+      std::size_t local_nrows ;
+      std::vector<double> fuse_y(nrows) ;
+
+      {
+        // EXTRACT LOCAL DATA FROM MASTER PROC
+
+        // COMPUTE LOCAL SIZE
+        local_nrows = local_size ;
+        if(0 < rest) local_nrows ++ ;
       
+
+        std::vector<double> local_y(local_nrows);
+        {
+          // compute parallel SPMV
+          for(std::size_t irow =0; irow<local_nrows;++irow)
+          {
+            double value = 0 ;
+            for( int k = matrix.kcol()[irow]; k < matrix.kcol()[irow+1];++k)
+            {
+              value += matrix.values()[k]*x[matrix.cols()[k]] ;
+            }
+            local_y[irow] = value ;
+          }
+        }
+        fuse_y = local_y ;
+
+        {
+          MPI_Status status ;
+          for(int i=1; i<nb_proc; ++i)
+          {
+            size_t local_nrows = local_size ;
+            if(i < rest) local_nrows ++ ;
+            std::vector<double> local_y(local_nrows) ;
+
+            MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
+            fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
+          }
+        }
+
+        
+      }
+
+      timer.printInfo() ;
+      double normy = PPTP::norm2(fuse_y) ;
+      std::cout<<"||y2||="<<normy<<std::endl ;
     }
-
-    timer.printInfo() ;
-    double normy = PPTP::norm2(fuse_y) ;
-    std::cout<<"||y3||="<<normy<<std::endl ;
-
   }
   else
   {
