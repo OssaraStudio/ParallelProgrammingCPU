@@ -222,7 +222,7 @@ int main(int argc, char** argv)
             fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
           }
         }
-        
+
         double normy = PPTP::norm2(fuse_y) ;
         std::cout<<"||y2||="<<normy<<std::endl ;
       }
@@ -286,7 +286,7 @@ int main(int argc, char** argv)
         local_y[irow] = value ;
       }
     }
-    sleep(1) ;
+    sleep(10) ;
     MPI_Send(local_y.data(), local_kcol_size-1, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
 
   }
