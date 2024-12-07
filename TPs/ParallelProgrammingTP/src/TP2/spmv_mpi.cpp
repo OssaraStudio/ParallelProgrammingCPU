@@ -224,8 +224,6 @@ int main(int argc, char** argv)
       std::cout<<"||y3||="<<normy<<std::endl ;
     }
 
-    timer.printInfo() ;
-
   }
   else
   {
@@ -287,7 +285,7 @@ int main(int argc, char** argv)
     MPI_Send(local_y.data(), local_kcol_size-1, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
 
   }
-  
+  timer.printInfo() ;
   MPI_Finalize() ;
   return 0 ;
 }
