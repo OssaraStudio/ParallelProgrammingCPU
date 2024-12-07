@@ -39,7 +39,7 @@ set -x
 export OMP_NUM_THREADS=1
 
 if [ -f $MONPROG ] ; then
-  if [ -f $MYDATA ] ; then
+  # if [ -f $MYDATA ] ; then
   for np in 24
   do
     for nx in 10
@@ -47,9 +47,9 @@ if [ -f $MONPROG ] ; then
     $MPIRUN -np ${np}  $MONPROG --nx $nx > log-NX${nx}-NPI${np}
     done
   done
-  else
-    echo "ERREUR : data $MYDATA inexistant !!"
-  fi
+  # else
+  #   echo "ERREUR : data $MYDATA inexistant !!"
+  # fi
 else
    echo "ERREUR : programme $MONPROG inexistant !!"
 fi
