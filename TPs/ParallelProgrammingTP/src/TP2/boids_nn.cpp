@@ -59,9 +59,9 @@ int main(int argc, char** argv)
 
     Timer timer ;
     BoidGenerator generator ;
-    std::vector<Boid> boids;
     
     int nb = vm["nb-boids"].as<int>() ;
+    std::vector<Boid> boids(nb);
     generator.generate(nb, boids) ;
 
     std::cout << "size = " << boids.size() << "\n" ;
