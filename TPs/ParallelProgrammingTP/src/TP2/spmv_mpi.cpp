@@ -176,11 +176,9 @@ int main(int argc, char** argv)
     std::cout<<"||y||="<<normy<<std::endl ;
 
     {
-      Timer::Sentry sentry(timer,"OMPSpMV") ;
+      Timer::Sentry sentry(timer,"MPISpMV") ;
       matrix.mult(x,y2) ;
     }
-    double normy2 = PPTP::norm2(y2) ;
-    std::cout<<"||y2||="<<normy2<<std::endl ;
 
     // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
     std::size_t local_nrows ;
@@ -221,10 +219,7 @@ int main(int argc, char** argv)
           fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
         }
       }
-      {
-        Timer::Sentry sentry(timer,"MPISpMV") ;
-        matrix.mult(x,y2) ;
-      }
+
       double normy = PPTP::norm2(fuse_y) ;
       std::cout<<"||y3||="<<normy<<std::endl ;
     }
