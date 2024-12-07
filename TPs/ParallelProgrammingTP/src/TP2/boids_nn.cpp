@@ -59,13 +59,13 @@ int main(int argc, char** argv)
 
     Timer timer ;
     BoidGenerator generator ;
+    std::vector<Boid> boids;
     
     int nb = vm["nb-boids"].as<int>() ;
-    std::vector<Boid> boids(nb);
     generator.generate(nb, boids) ;
 
     for(int i=0; i<nb; ++i)
-        std::cout << "size = " << boids[i] << "\n" ;
+        std::cout << boids[i] << "\n" ;
     
     
     // std::size_t nrows = matrix.nrows();

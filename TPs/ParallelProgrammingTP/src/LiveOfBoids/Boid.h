@@ -25,13 +25,6 @@ class Boid {
             return out;
         };
 
-        Boid& operator=(const Boid& other)
-        {
-            this->m_position = other.m_position;
-            this->m_velocity = other.m_velocity;
-            return *this;
-        };
-
         // Getters
         Vector2D getPosition() const { return m_position; };
         float getPositionX() const { return m_position.getX(); };

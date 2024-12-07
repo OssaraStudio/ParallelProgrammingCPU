@@ -18,7 +18,7 @@ class BoidGenerator
     BoidGenerator(){}
     virtual ~BoidGenerator(){}
 
-    void generate(int nb, std::vector<Boid> boids)
+    void generate(int nb, std::vector<Boid>& boids)
     {
         std::random_device rd;
         std::mt19937 eng(rd());        
@@ -31,10 +31,8 @@ class BoidGenerator
         {
             auto angle = angle_space(eng);                    // Random direction
             auto speed = velocity_space(eng);                // Random speed
-            boids[i] = Boid(
-                            Vector2D{random_x(eng), random_y(eng)}, 
-                            Vector2D{speed * std::cos(angle), speed * std::sin(angle)}
-                        );
+            std::cout << random_x(eng) << "\n" ;
+            boids.push_back(Boid(Vector2D{random_x(eng), random_y(eng)}, Vector2D{speed * std::cos(angle), speed * std::sin(angle)}));
         }
     };
 
