@@ -283,7 +283,6 @@ int main(int argc, char** argv)
         local_y[irow] = value ;
       }
     }
-    sleep(10) ;
     MPI_Send(local_y.data(), local_kcol_size-1, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
 
   }
