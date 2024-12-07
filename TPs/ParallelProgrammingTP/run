@@ -15,7 +15,7 @@
 ### usage : oarsub -l core=32 -S ./job_exemple.sh
 
 ### indiquer votre executable
-MONPROG=/gext/ossara.djaodoh/CPUProject/ParallelProgrammingCPU/TPs/ParallelProgrammingTP/bin/densemv_mpi.exe
+MONPROG=/gext/ossara.djaodoh/CPUProject/ParallelProgrammingCPU/TPs/ParallelProgrammingTP/bin/spmv_mpi.exe
 ### indiquer votre fichier de donnees
 MYDATA=/gext/ossara.djaodoh/CPUProject/data
 
