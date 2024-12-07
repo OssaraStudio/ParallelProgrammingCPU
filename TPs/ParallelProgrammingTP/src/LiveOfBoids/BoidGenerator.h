@@ -39,10 +39,6 @@ class BoidGenerator
     {
         for(int i=0; i<boids.size(); ++i)
         {
-            std::cout << boids[i] << "\n" ;
-            for(auto& b: boids[i].get_neighbors(boids, radius))
-                std::cout << b << "\n" ;
-            std::cout << "\n\n" ;
             y[i] = boids[i].get_neighbors(boids, radius).size() ;
         }
     };
