@@ -283,6 +283,7 @@ int main(int argc, char** argv)
         local_y[irow] = value ;
       }
     }
+    std::cout << my_rank << "\n" ;
     sleep(my_rank) ;
     MPI_Send(local_y.data(), local_kcol_size-1, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
 
