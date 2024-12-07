@@ -222,13 +222,12 @@ int main(int argc, char** argv)
             fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
           }
         }
-
         
+        double normy = PPTP::norm2(fuse_y) ;
+        std::cout<<"||y2||="<<normy<<std::endl ;
       }
 
       timer.printInfo() ;
-      double normy = PPTP::norm2(fuse_y) ;
-      std::cout<<"||y2||="<<normy<<std::endl ;
     }
   }
   else
