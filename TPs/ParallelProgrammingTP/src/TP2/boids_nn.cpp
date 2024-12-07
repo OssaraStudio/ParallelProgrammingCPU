@@ -64,9 +64,6 @@ int main(int argc, char** argv)
     
     int nb = vm["nb-boids"].as<int>() ;
     generator.generate(nb, boids) ;
-
-    for(int i=0; i<nb; ++i)
-        std::cout << boids[i] << "\n" ;
     
     {
         std::vector<int> y(nb);
