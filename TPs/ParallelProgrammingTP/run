@@ -17,7 +17,7 @@
 ### indiquer votre executable
 MONPROG=/gext/ossara.djaodoh/CPUProject/ParallelProgrammingCPU/TPs/ParallelProgrammingTP/bin/densemv_mpi.exe
 ### indiquer votre fichier de donnees
-MYDATA=
+MYDATA=/gext/ossara.djaodoh/CPUProject/data
 
 
 ### en execution standand, rien a changer ci-apres
@@ -40,9 +40,9 @@ export OMP_NUM_THREADS=1
 
 if [ -f $MONPROG ] ; then
   if [ -f $MYDATA ] ; then
-  for np in 1 2 4 8 12 16 24
+  for np in 24
   do
-    for nx in 50 100 150 200
+    for nx in 10
     do
     $MPIRUN -np ${np}  $MONPROG --nx $nx > log-NX${nx}-NPI${np}
     done
