@@ -15,17 +15,16 @@
 ### usage : oarsub -l core=32 -S ./job_exemple.sh
 
 ### indiquer votre executable
-# MONPROG=/gext/jean-marc.gratien/ParallelProgrammingTP/bin/densemv_mpi.exe
-MONPROG=/gext/ossara.djaodoh/CPUProject/ParallelProgrammingCPU/TPs/ParallelProgrammingTP/bin/densemv.exe
+MONPROG=/gext/ossara.djaodoh/CPUProject/ParallelProgrammingCPU/TPs/ParallelProgrammingTP/bin/densemv_mpi.exe
 ### indiquer votre fichier de donnees
-MYDATA=/gext/ossara.djaodoh/CPUProject/data
+MYDATA=
 
 
 ### en execution standand, rien a changer ci-apres
 
 echo DEBUT
 date
-echo SUITE
+
 NP=$(cat $OAR_NODE_FILE | wc -l)
 echo execution sur $NP coeurs
 echo sur les nodes $(cat $OAR_NODE_FILE)
