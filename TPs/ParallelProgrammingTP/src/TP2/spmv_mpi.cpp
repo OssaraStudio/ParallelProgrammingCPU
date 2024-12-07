@@ -194,37 +194,42 @@ int main(int argc, char** argv)
       if(0 < rest) local_nrows ++ ;
     
 
-    std::vector<double> local_y(local_nrows);
-    {
-      // compute parallel SPMV
-      for(std::size_t irow =0; irow<local_nrows;++irow)
+      std::vector<double> local_y(local_nrows);
       {
-        double value = 0 ;
-        for( int k = matrix.kcol()[irow]; k < matrix.kcol()[irow+1];++k)
+        // compute parallel SPMV
+        for(std::size_t irow =0; irow<local_nrows;++irow)
         {
-          value += matrix.values()[k]*x[matrix.cols()[k]] ;
+          double value = 0 ;
+          for( int k = matrix.kcol()[irow]; k < matrix.kcol()[irow+1];++k)
+          {
+            value += matrix.values()[k]*x[matrix.cols()[k]] ;
+          }
+          local_y[irow] = value ;
         }
-        local_y[irow] = value ;
       }
-    }
-    fuse_y = local_y ;
+      fuse_y = local_y ;
 
-    {
-      MPI_Status status ;
-      for(int i=1; i<nb_proc; ++i)
       {
-        size_t local_nrows = local_size ;
-        if(i < rest) local_nrows ++ ;
-        std::vector<double> local_y(local_nrows) ;
+        MPI_Status status ;
+        for(int i=1; i<nb_proc; ++i)
+        {
+          size_t local_nrows = local_size ;
+          if(i < rest) local_nrows ++ ;
+          std::vector<double> local_y(local_nrows) ;
 
-        MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
-        fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
+          MPI_Recv(local_y.data(), local_nrows, MPI_DOUBLE, i, 6, MPI_COMM_WORLD, &status) ;
+          fuse_y.insert(fuse_y.end(), local_y.begin(), local_y.end()) ;
+        }
       }
-    }
-
+      {
+        Timer::Sentry sentry(timer,"MPISpMV") ;
+        matrix.mult(x,y2) ;
+      }
       double normy = PPTP::norm2(fuse_y) ;
       std::cout<<"||y3||="<<normy<<std::endl ;
     }
+
+    timer.printInfo() ;
 
   }
   else
@@ -286,7 +291,7 @@ int main(int argc, char** argv)
     MPI_Send(local_y.data(), local_kcol_size-1, MPI_DOUBLE, 0, 6, MPI_COMM_WORLD) ;
 
   }
-  timer.printInfo() ;
+  
   MPI_Finalize() ;
   return 0 ;
 }
