@@ -173,7 +173,6 @@ namespace PPTP
         assert(y.size() >= m_nrows) ;
 
         std::size_t nb_task = (m_nrows+m_chunk_size-1)/m_chunk_size ;
-        std::cout << "nb_task : " << nb_task*nb_task << "\n" ;
 
         #pragma omp parallel
         {
@@ -201,6 +200,7 @@ namespace PPTP
                     {
                       value += matrix_ptr[jcol]*x[jcol] ;
                     }
+                    #pragma omp atomic
                     y[irow] += value ;
                   }
                 }
@@ -228,7 +228,7 @@ namespace PPTP
         assert(y.size()>=m_nrows) ;
         {
             // TODO TBB WITH RANGE
-          tbb::parallel_for(tbb::blocked_range<size_t>(0, m_nrows),
+          tbb::parallel_for(tbb::blocked_range<size_t>(0, m_nrows, m_chunk_size),
                           [&](tbb::blocked_range<size_t> const& r)
                           {
                             for(auto irow=r.begin(); irow<r.end(); ++irow)
@@ -250,18 +250,24 @@ namespace PPTP
       {
         assert(x.size()>=m_nrows) ;
         y.resize(m_nrows, 0.0);
+        tbb::spin_mutex mutex ;
         {
                 // TODO TBB RANGE 2D
-                tbb::parallel_for(tbb::blocked_range2d<size_t>(0, m_nrows, 0, m_nrows),
+                tbb::parallel_for(tbb::blocked_range2d<size_t>(0, m_nrows, m_chunk_size, 0, m_nrows, m_chunk_size),
                           [&](tbb::blocked_range2d<size_t> const& r)
                           {
                             for(auto irow=r.rows().begin(); irow<r.rows().end(); ++irow)
                             {
                               double const* matrix_ptr = m_values.data() ;
+                              double value = 0 ;
                               matrix_ptr += (irow*m_nrows) ;
                               for(auto jcol =r.cols().begin(); jcol<r.cols().end();++jcol)
                               {
-                                y[irow] += matrix_ptr[jcol]*x[jcol] ;
+                                value += matrix_ptr[jcol]*x[jcol] ;
+                              }
+                              {
+                                tbb::spin_mutex::scoped_lock lock(mutex) ;
+                                y[irow] += value ;
                               }
                             }
                           });
