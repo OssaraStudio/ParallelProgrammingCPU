@@ -109,6 +109,6 @@ int main(int argc, char** argv)
     //   std::cout<<"TBBRange2DTile ||y||="<<normy<<std::endl ;
     // }
   
-  timer.printInfo() ;
+//   timer.printInfo() ;
   return 0 ;
 }
