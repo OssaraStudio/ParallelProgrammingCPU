@@ -132,7 +132,7 @@ int main(int argc, char** argv)
       // SEND MATRIX
       for (int i=1; i<nb_proc;++i)
       {
-        std::cout<<" SEND MATRIX DATA to proc "<<i<<std::endl ;
+        // std::cout<<" SEND MATRIX DATA to proc "<<i<<std::endl ;
 
         // SEND LOCAL SIZE to PROC I
         size_t local_nrows = local_size ;
@@ -246,9 +246,9 @@ int main(int argc, char** argv)
       MPI_Recv(&local_values_size, 1, MPI_UNSIGNED_LONG, 0, 0, MPI_COMM_WORLD, &status) ;
       MPI_Recv(&local_cols_size, 1, MPI_UNSIGNED_LONG, 0, 1, MPI_COMM_WORLD, &status) ;
       MPI_Recv(&local_kcol_size, 1, MPI_UNSIGNED_LONG, 0, 2, MPI_COMM_WORLD, &status) ;
-      std::cout << "local size value receive by " << my_rank << " is " << local_values_size << std::endl ;
-      std::cout << "local cols value receive by " << my_rank << " is " << local_cols_size << std::endl ;
-      std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol_size << std::endl ;
+      // std::cout << "local size value receive by " << my_rank << " is " << local_values_size << std::endl ;
+      // std::cout << "local cols value receive by " << my_rank << " is " << local_cols_size << std::endl ;
+      // std::cout << "local kcol value receive by " << my_rank << " is " << local_kcol_size << std::endl ;
 
       // RECV MATRIX DATA
       local_values.resize(local_values_size) ;
