@@ -178,14 +178,11 @@ int main(int argc, char** argv)
     }
 
     {
-      {
-        Timer::Sentry sentry(timer,"MPISpMV") ;
-        matrix.mult(x,y2) ;
-      }
-
       // COMPUTE LOCAL MATRICE LOCAL VECTOR ON PROC 0
       std::size_t local_nrows ;
       std::vector<double> fuse_y(nrows) ;
+
+      Timer::Sentry sentry(timer,"MPISpMV") ;
 
       {
         // EXTRACT LOCAL DATA FROM MASTER PROC
@@ -227,8 +224,8 @@ int main(int argc, char** argv)
         std::cout<<"||y2||="<<normy<<std::endl ;
       }
 
-      timer.printInfo() ;
     }
+    timer.printInfo() ;
   }
   else
   {
