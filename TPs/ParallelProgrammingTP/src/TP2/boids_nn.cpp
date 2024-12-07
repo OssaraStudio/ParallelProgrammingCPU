@@ -64,7 +64,8 @@ int main(int argc, char** argv)
     std::vector<Boid> boids(nb);
     generator.generate(nb, boids) ;
 
-    std::cout << "size = " << boids.size() << "\n" ;
+    for(int i=0; i<nb; ++i)
+        std::cout << "size = " << boids[i] << "\n" ;
     
     
     // std::size_t nrows = matrix.nrows();
