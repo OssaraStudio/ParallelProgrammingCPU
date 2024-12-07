@@ -60,6 +60,7 @@ int main(int argc, char** argv)
     Timer timer ;
     BoidGenerator generator ;
     std::vector<Boid> boids;
+    float radius = 10.f
     
     int nb = vm["nb-boids"].as<int>() ;
     generator.generate(nb, boids) ;
@@ -67,17 +68,17 @@ int main(int argc, char** argv)
     for(int i=0; i<nb; ++i)
         std::cout << boids[i] << "\n" ;
     
-    
-    // std::size_t nrows = matrix.nrows();
-    // {
-    //     std::vector<double> y(nrows);
-    //     {
-    //         Timer::Sentry sentry(timer,"Boids") ;
-    //         matrix.mult(x,y) ;
-    //     }
-    //     double normy = PPTP::norm2(y) ;
-    //     std::cout<<"||y||="<<normy<<std::endl ;
-    // }
+    {
+        std::vector<int> y(nb);
+        {
+            Timer::Sentry sentry(timer,"Boids") ;
+            generator.findNeighbors(boids,y,radius) ;
+        }
+        // double normy = PPTP::norm2(y) ;
+        // std::cout<<"||y||="<<normy<<std::endl ;
+        for(int i=0; i<nb; ++i)
+            std::cout << y[i] << "\n" ;
+    }
 
     // matrix.setChunkSize(vm["chunk-size"].as<int>()) ;
     // {

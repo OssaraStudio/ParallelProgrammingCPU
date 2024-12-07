@@ -35,6 +35,14 @@ class BoidGenerator
         }
     };
 
+    void findNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius)
+    {
+        for(int i=0; i<boids.size(); ++i)
+        {
+            y[i] = boids[i].get_neighbors(boids, radius).size() ;
+        }
+    };
+
 };
 
 #endif /* SRC_LIVEOFBOIDS_BOIDGENERATOR_H_ */
