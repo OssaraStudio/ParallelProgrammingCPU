@@ -139,7 +139,7 @@ class BoidGenerator
 
     void tbbrangefindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
       {
-        std::size_t n_rows = body.size() ;
+        std::size_t n_rows = boids.size() ;
         {
             // TODO TBB WITH RANGE
           tbb::parallel_for(tbb::blocked_range<size_t>(0, n_rows, m_chunk_size),
@@ -164,7 +164,7 @@ class BoidGenerator
 
       void tbbrange2dfindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
       {
-        std::size_t n_rows = body.size() ;
+        std::size_t n_rows = boids.size() ;
         tbb::spin_mutex mutex ;
         {
                 // TODO TBB RANGE 2D
