@@ -117,7 +117,7 @@ int main(int argc, char** argv)
     }
 
     {
-      std::vector<double> y2(nb);
+      std::vector<int> y2(nb);
       {
         Timer::Sentry sentry(timer,"TBBRangeBoids") ;
         generator.tbbrangefindNeighbors(boids,y2,radius) ;
@@ -135,7 +135,7 @@ int main(int argc, char** argv)
     }
 
     {
-      std::vector<double> y2(nb);
+      std::vector<int> y2(nb);
       {
         Timer::Sentry sentry(timer,"TBBRange2DBoids") ;
         generator.tbbrange2dfindNeighbors(boids,y2,radius) ;
