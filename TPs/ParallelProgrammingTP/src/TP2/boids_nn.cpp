@@ -74,7 +74,8 @@ int main(int argc, char** argv)
         // double normy = PPTP::norm2(y) ;
         // std::cout<<"||y||="<<normy<<std::endl ;
         for(int i=0; i<nb; ++i)
-            std::cout << y[i] << "\n" ;
+            if(y[i]!=0)
+                std::cout << y[i] << "\n" ;
     }
 
     // matrix.setChunkSize(vm["chunk-size"].as<int>()) ;
