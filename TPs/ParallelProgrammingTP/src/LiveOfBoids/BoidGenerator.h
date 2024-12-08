@@ -93,48 +93,51 @@ class BoidGenerator
         
     };
 
+    // void omptilefindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
     void omptilefindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
     {
         std::size_t n_rows = boids.size();
-        std::size_t nb_task = (n_rows+m_chunk_size-1)/m_chunk_size ;
+        std::size_t n_cols = boids.size();
+        std::size_t nb_row_tasks = (n_rows + m_chunk_size - 1) / m_chunk_size;
+        std::size_t nb_col_tasks = (n_cols + m_chunk_size - 1) / m_chunk_size;
 
         #pragma omp parallel
         {
-          #pragma omp single
-          {
-            // TODO TASK OPENMP 2D
-            for (std::size_t row_task_id = 0; row_task_id < nb_task; ++row_task_id)
+            #pragma omp single
             {
-              for (std::size_t col_task_id = 0; col_task_id < nb_task; ++col_task_id)
-              {
-                std::size_t start_row = row_task_id * m_chunk_size ;
-                std::size_t end_row = std::min(start_row + m_chunk_size, n_rows) ;
-
-                std::size_t start_col = col_task_id * m_chunk_size ;
-                std::size_t end_col = std::min(start_col + m_chunk_size, n_rows) ;
-
-                #pragma omp task firstprivate(start_row, end_row, start_col, end_col)
+                for (std::size_t row_task_id = 0; row_task_id < nb_row_tasks; ++row_task_id)
                 {
-                  for (std::size_t irow = start_row; irow < end_row; ++irow)
-                  {
-                    std::vector<Boid> local_neighbors ;
-                    for (std::size_t jcol = start_col; jcol < end_col; ++jcol)
+                    std::size_t start_row = row_task_id * m_chunk_size;
+                    std::size_t end_row = std::min(start_row + m_chunk_size, n_rows);
+
+                    for (std::size_t col_task_id = 0; col_task_id < nb_col_tasks; ++col_task_id)
                     {
-                      if ((&boids[jcol] != &boids[irow]) && 
-                                (boids[irow].getPosition().euclidean_dist(boids[jcol].getPosition()) < radius))
+                        std::size_t start_col = col_task_id * m_chunk_size;
+                        std::size_t end_col = std::min(start_col + m_chunk_size, n_cols);
+
+                        #pragma omp task firstprivate(start_row, end_row, start_col, end_col)
                         {
-                            local_neighbors.push_back(boids[jcol]);
+                            for (std::size_t irow = start_row; irow < end_row; ++irow)
+                            {
+                                std::vector<Boid> local_neighbors;
+                                for (std::size_t icol = start_col; icol < end_col; ++icol)
+                                {
+                                    if ((&boids[icol] != &boids[irow]) &&
+                                        (boids[irow].getPosition().euclidean_dist(boids[icol].getPosition()) < radius))
+                                    {
+                                        local_neighbors.push_back(boids[icol]);
+                                    }
+                                }
+                                #pragma omp critical
+                                {
+                                    y[irow] += local_neighbors.size();
+                                }
+                            }
                         }
                     }
-                    #pragma omp critical
-                    y[irow] = local_neighbors.size() ;
-                  }
                 }
-              }
             }
-          }
         }
-        
     };
 
     void tbbrangefindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
