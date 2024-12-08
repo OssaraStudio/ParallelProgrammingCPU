@@ -64,9 +64,6 @@ class BoidGenerator
                 std::size_t start_row = task_id * m_chunk_size;
                 std::size_t end_row = start_row + m_chunk_size;
 
-                std::cout << "start_row = " << start_row << "\n" ;
-                std::cout << "end_row = " << end_row << "\n" ;
-
                 #pragma omp task firstprivate(start_row, end_row)
                 {
                   for(std::size_t irow =start_row; irow<end_row; ++irow)
