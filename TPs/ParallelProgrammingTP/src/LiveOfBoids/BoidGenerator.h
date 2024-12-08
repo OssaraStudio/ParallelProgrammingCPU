@@ -127,7 +127,7 @@ class BoidGenerator
                                         local_neighbors.push_back(boids[icol]);
                                     }
                                 }
-                                #pragma omp critical
+                                // #pragma omp critical
                                 {
                                     y[irow] += local_neighbors.size();
                                 }
@@ -140,7 +140,7 @@ class BoidGenerator
     };
 
     void tbbrangefindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
-      {
+    {
         std::size_t n_rows = boids.size() ;
         {
             // TODO TBB WITH RANGE
