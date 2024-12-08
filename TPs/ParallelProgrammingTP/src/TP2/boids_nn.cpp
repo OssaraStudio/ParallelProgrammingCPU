@@ -69,7 +69,7 @@ int main(int argc, char** argv)
     {
         {
             Timer::Sentry sentry(timer,"Boids") ;
-            // generator.findNeighbors(boids,y,radius) ;
+            generator.findNeighbors(boids,y,radius) ;
         }
         // double normy = PPTP::norm2(y) ;
         // std::cout<<"||y||="<<normy<<std::endl ;
@@ -87,13 +87,13 @@ int main(int argc, char** argv)
         }
         // double normy = PPTP::norm2(y) ;
         // std::cout<<"OMPTask ||y||="<<normy<<std::endl ;
-        // for(int i=0; i<nb; ++i)
-        //     if(y2[i]!=0)
-        //         if(y[i] != y2[i]) 
-        //         {
-        //             std::cout << "False" << "\n" ;
-        //             break ;
-        //         }
+        for(int i=0; i<nb; ++i)
+            if(y2[i]!=0)
+                if(y[i] != y2[i]) 
+                {
+                    std::cout << "False" << "\n" ;
+                    break ;
+                }
     }
 
     // {
