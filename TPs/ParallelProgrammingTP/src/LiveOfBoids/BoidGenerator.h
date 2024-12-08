@@ -127,7 +127,7 @@ class BoidGenerator
                                         local_neighbors.push_back(boids[icol]);
                                     }
                                 }
-                                // #pragma omp critical
+                                #pragma omp atomic
                                 {
                                     y[irow] += local_neighbors.size();
                                 }
