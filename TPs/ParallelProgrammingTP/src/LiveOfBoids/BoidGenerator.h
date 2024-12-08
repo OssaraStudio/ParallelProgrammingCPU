@@ -69,7 +69,6 @@ class BoidGenerator
                   for(std::size_t irow =start_row; irow<end_row; ++irow)
                   {
                     y[irow] = boids[irow].get_neighbors(boids, radius).size();
-                    std::cout << irow << "\n" ;
                   }
                 }
               }
