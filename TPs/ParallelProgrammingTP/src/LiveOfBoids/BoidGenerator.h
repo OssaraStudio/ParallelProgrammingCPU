@@ -62,7 +62,7 @@ class BoidGenerator
               for(std::size_t task_id = 0; task_id < nb_task; ++task_id)
               {
                 std::size_t start_row = task_id * m_chunk_size;
-                std::size_t end_row = std::min(start_row + m_chunk_size);
+                std::size_t end_row = start_row + m_chunk_size;
 
                 std::cout << "start_row = " << start_row << "\n" ;
                 std::cout << "end_row = " << end_row << "\n" ;
