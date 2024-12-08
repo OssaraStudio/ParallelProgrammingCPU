@@ -79,6 +79,7 @@ class BoidGenerator
                         }
                     }
                     y[irow] = value ;
+                    std::cout << irow << "\n" ;
                   }
                 }
               }
