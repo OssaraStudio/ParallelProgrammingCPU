@@ -83,7 +83,7 @@ int main(int argc, char** argv)
         std::vector<double> y(nb);
         {
             Timer::Sentry sentry(timer,"OMPTaskBoids") ;
-            generator.omptaskfindNeighbors(boids) ;
+            generator.omptaskfindNeighbors(boids,y) ;
         }
         // double normy = PPTP::norm2(y) ;
         // std::cout<<"OMPTask ||y||="<<normy<<std::endl ;
