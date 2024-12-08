@@ -97,6 +97,7 @@ class BoidGenerator
     {
         std::size_t n_rows = boids.size();
         std::size_t n_cols = boids.size();
+        y.resize(n_rows, 0);
         std::size_t nb_row_tasks = (n_rows + m_chunk_size - 1) / m_chunk_size;
         std::size_t nb_col_tasks = (n_cols + m_chunk_size - 1) / m_chunk_size;
 
@@ -165,6 +166,7 @@ class BoidGenerator
       void tbbrange2dfindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
       {
         std::size_t n_rows = boids.size() ;
+        y.resize(n_rows, 0);
         tbb::spin_mutex mutex ;
         {
                 // TODO TBB RANGE 2D
