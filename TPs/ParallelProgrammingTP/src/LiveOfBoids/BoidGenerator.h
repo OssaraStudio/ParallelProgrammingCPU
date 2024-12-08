@@ -128,9 +128,7 @@ class BoidGenerator
                                     }
                                 }
                                 #pragma omp atomic
-                                {
-                                    y[irow] += local_neighbors.size();
-                                }
+                                y[irow] += local_neighbors.size();
                             }
                         }
                     }
