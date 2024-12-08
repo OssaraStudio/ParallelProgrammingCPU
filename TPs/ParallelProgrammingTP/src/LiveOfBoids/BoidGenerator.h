@@ -53,14 +53,36 @@ class BoidGenerator
     void omptaskfindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius)
     {
         std::size_t nb_task = (boids.size()+m_chunk_size-1)/m_chunk_size ;
-        int num_cores = omp_get_num_procs();
-        std::cout << "num_cores : " << num_cores << "\n" ;
-        
-        #pragma omp parallel for
-        for(int i = 0; i < boids.size(); ++i)
+
+        #pragma omp parallel
         {
-            y[i] = boids[i].omptaskget_neighbors(boids, radius).size();
+            //TODO TASK OPENMP
+            #pragma omp single
+            {
+              for(std::size_t task_id = 0; task_id < nb_task; ++task_id)
+              {
+                std::size_t start_row = task_id * m_chunk_size;
+                std::size_t end_row = std::min(start_row + m_chunk_size);
+
+                std::cout << "start_row = " << start_row << "\n" ;
+                std::cout << "end_row = " << end_row << "\n" ;
+
+                #pragma omp task firstprivate(start_row, end_row)
+                {
+                  for(std::size_t irow =start_row; irow<end_row; ++irow)
+                  {
+                    y[irow] = boids[irow].get_neighbors(boids, radius).size();
+                  }
+                }
+              }
+            }
         }
+        
+        // #pragma omp parallel for
+        // for(int i = 0; i < boids.size(); ++i)
+        // {
+        //     y[i] = boids[i].omptaskget_neighbors(boids, radius).size();
+        // }
         
     };
 

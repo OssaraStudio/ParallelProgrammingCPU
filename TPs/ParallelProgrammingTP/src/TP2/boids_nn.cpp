@@ -87,7 +87,6 @@ int main(int argc, char** argv)
         }
         // double normy = PPTP::norm2(y) ;
         // std::cout<<"OMPTask ||y||="<<normy<<std::endl ;
-        std::cout << "y = " << y.size() << "y2 = " << y2.size() << "\n" ;
         for(int i=0; i<nb; ++i)
             if(y2[i]!=0)
                 if(y[i] != y2[i]) 
