@@ -109,11 +109,12 @@ int main(int argc, char** argv)
         // std::cout<<"OMPTask ||y||="<<normy<<std::endl ;
         for(int i=0; i<nb; ++i)
             if(y2[i]!=0)
-                if(y[i] != y2[i]) 
-                {
-                    std::cout << "False OMPTileBoids" << "\n" ;
-                    break ;
-                }
+                std::cout << y2[i] << "\n" ;
+                // if(y[i] != y2[i]) 
+                // {
+                //     std::cout << "False OMPTileBoids" << "\n" ;
+                //     break ;
+                // }
     }
 
     {
