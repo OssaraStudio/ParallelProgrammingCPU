@@ -71,8 +71,11 @@ int main(int argc, char** argv)
             Timer::Sentry sentry(timer,"Boids") ;
             generator.findNeighbors(boids,y,radius) ;
         }
-        double normy = PPTP::norm2(y) ;
-        std::cout<<"||y||="<<normy<<std::endl ;
+        // double normy = PPTP::norm2(y) ;
+        // std::cout<<"||y||="<<normy<<std::endl ;
+        for(int i=0; i<nb; ++i)
+            if(y[i]!=0)
+                std::cout << y[i] << "\n" ;
     }
 
     // matrix.setChunkSize(vm["chunk-size"].as<int>()) ;
