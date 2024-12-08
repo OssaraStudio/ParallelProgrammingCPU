@@ -29,8 +29,8 @@ class BoidGenerator
     {
         std::random_device rd;
         std::mt19937 eng(rd());        
-        std::uniform_real_distribution<float> random_x(0.0f, static_cast<float>(100));
-        std::uniform_real_distribution<float> random_y(0.0f, static_cast<float>(100));
+        std::uniform_real_distribution<float> random_x(0.0f, static_cast<float>(600));
+        std::uniform_real_distribution<float> random_y(0.0f, static_cast<float>(400));
         std::uniform_real_distribution<float> angle_space(0.0f, 2.0f * M_PI);
         std::uniform_real_distribution<float> velocity_space(0.1f, 0.5f);
 
