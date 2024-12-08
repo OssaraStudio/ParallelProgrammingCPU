@@ -10,6 +10,8 @@
 
 #include <vector>
 #include <random>
+#include "tbb/tbb.h"
+#include "omp.h"
 #include "Boid.h"
 
 class BoidGenerator
@@ -48,10 +50,16 @@ class BoidGenerator
         }
     };
 
-    void omptaskfindNeighbors(std::vector<Boid>& boids, std::vector<int>& y)
+    void omptaskfindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius)
     {
         std::size_t nb_task = (boids.size()+m_chunk_size-1)/m_chunk_size ;
-        std::cout << "nb_task = " << nb_task << "\n" ;
+        
+        #pragma omp parallel for
+        for(int i = 0; i < boids.size(); ++i)
+        {
+            y[i] = boids[i].omptaskget_neighbors(boids, radius).size();
+        }
+        
     };
 
     private:

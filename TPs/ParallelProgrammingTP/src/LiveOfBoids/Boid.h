@@ -10,6 +10,8 @@
 
 #include "Vector2D.h"
 #include <vector>
+#include "tbb/tbb.h"
+#include "omp.h"
 
 
 class Boid {
@@ -51,6 +53,32 @@ class Boid {
             }
             return neighbors;
         };
+
+        std::vector<Boid> omptaskget_neighbors(const std::vector<Boid>& boids, float radius) const
+        {
+            std::vector<Boid> neighbors;
+            // A mutex to handle concurrent access to the neighbors vector
+            #pragma omp parallel
+            {
+                std::vector<Boid> local_neighbors; // Thread-local neighbors vector
+
+                #pragma omp for nowait
+                for (size_t i = 0; i < boids.size(); ++i)
+                {
+                    const Boid& other = boids[i];
+                    if ((&other != this) && (this->m_position.euclidean_dist(other.m_position) < radius))
+                    {
+                        local_neighbors.push_back(other);
+                    }
+                }
+
+                // Combine results from all threads
+                #pragma omp critical
+                neighbors.insert(neighbors.end(), local_neighbors.begin(), local_neighbors.end());
+            }
+
+            return neighbors;
+        }
 
     private:
         Vector2D m_position;

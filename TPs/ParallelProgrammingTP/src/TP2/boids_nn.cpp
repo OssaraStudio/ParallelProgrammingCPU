@@ -80,10 +80,10 @@ int main(int argc, char** argv)
 
     generator.setChunkSize(vm["chunk-size"].as<int>()) ;
     {
-        std::vector<double> y(nb);
+        std::vector<int> y(nb);
         {
             Timer::Sentry sentry(timer,"OMPTaskBoids") ;
-            generator.omptaskfindNeighbors(boids,y) ;
+            generator.omptaskfindNeighbors(boids,y,radius) ;
         }
         // double normy = PPTP::norm2(y) ;
         // std::cout<<"OMPTask ||y||="<<normy<<std::endl ;
