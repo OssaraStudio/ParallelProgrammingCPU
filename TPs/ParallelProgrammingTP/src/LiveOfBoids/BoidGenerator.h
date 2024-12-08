@@ -182,10 +182,8 @@ class BoidGenerator
                                     local_neighbors.push_back(boids[jcol]);
                                 }
                               }
-                              {
-                                tbb::spin_mutex::scoped_lock lock(mutex) ;
-                                y[irow] = local_neighbors.size() ;
-                              }
+                              tbb::spin_mutex::scoped_lock lock(mutex) ;
+                              y[irow] = local_neighbors.size() ;
                             }
                           });
         }
