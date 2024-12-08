@@ -65,31 +65,33 @@ int main(int argc, char** argv)
     int nb = vm["nb-boids"].as<int>() ;
     generator.generate(nb, boids) ;
     
+    std::vector<int> y(nb);
     {
-        std::vector<int> y(nb);
         {
             Timer::Sentry sentry(timer,"Boids") ;
             generator.findNeighbors(boids,y,radius) ;
         }
         // double normy = PPTP::norm2(y) ;
         // std::cout<<"||y||="<<normy<<std::endl ;
-        for(int i=0; i<nb; ++i)
-            if(y[i]!=0)
-                std::cout << y[i] << "\n" ;
+        // for(int i=0; i<nb; ++i)
+        //     if(y[i]!=0)
+        //         std::cout << y[i] << "\n" ;
     }
 
     generator.setChunkSize(vm["chunk-size"].as<int>()) ;
     {
-        std::vector<int> y(nb);
+        std::vector<int> y2(nb);
         {
             Timer::Sentry sentry(timer,"OMPTaskBoids") ;
-            generator.omptaskfindNeighbors(boids,y,radius) ;
+            generator.omptaskfindNeighbors(boids,y2,radius) ;
         }
         // double normy = PPTP::norm2(y) ;
         // std::cout<<"OMPTask ||y||="<<normy<<std::endl ;
         for(int i=0; i<nb; ++i)
-            if(y[i]!=0)
-                std::cout << y[i] << "\n" ;
+            if(y2[i]!=0)
+                if(y[i] != y2[i])
+                    std::cout << "False" << "\n" ;
+                    break ;
     }
 
     // {
