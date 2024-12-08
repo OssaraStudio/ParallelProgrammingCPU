@@ -101,7 +101,7 @@ int main(int argc, char** argv)
     {
       std::vector<int> y2(nb);
         {
-            Timer::Sentry sentry(timer,"OMPTaskBoids") ;
+            Timer::Sentry sentry(timer,"OMPTileBoids") ;
             generator.omptilefindNeighbors(boids,y2,radius) ;
         }
         std::cout << "finish 3\n" ; 
