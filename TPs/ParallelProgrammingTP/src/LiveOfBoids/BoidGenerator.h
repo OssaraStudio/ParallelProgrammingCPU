@@ -78,7 +78,7 @@ class BoidGenerator
                             value ++ ;
                         }
                     }
-                    y[irow] = value +1 ;
+                    y[irow] = value ;
                   }
                 }
               }
