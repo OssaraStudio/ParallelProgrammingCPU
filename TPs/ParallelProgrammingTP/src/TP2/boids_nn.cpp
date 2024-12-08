@@ -116,25 +116,41 @@ int main(int argc, char** argv)
                 }
     }
 
-    // {
-    //   std::vector<double> y(nrows);
-    //   {
-    //     Timer::Sentry sentry(timer,"TBBRangeBoids") ;
-    //     matrix.tbbrangemult(x,y) ;
-    //   }
+    {
+      std::vector<double> y2(nb);
+      {
+        Timer::Sentry sentry(timer,"TBBRangeBoids") ;
+        generator.tbbrangefindNeighbors(boids,y2,radius) ;
+      }
+      std::cout << "finish 4\n" ;
     //   double normy = PPTP::norm2(y) ;
     //   std::cout<<"TBBRange ||y||="<<normy<<std::endl ;
-    // }
+        for(int i=0; i<nb; ++i)
+            if(y2[i]!=0)
+                if(y[i] != y2[i]) 
+                {
+                    std::cout << "False" << "\n" ;
+                    break ;
+                }
+    }
 
-    // {
-    //   std::vector<double> y(nrows);
-    //   {
-    //     Timer::Sentry sentry(timer,"TBBRange2DBoids") ;
-    //     matrix.tbbrange2dmult(x,y) ;
-    //   }
+    {
+      std::vector<double> y2(nb);
+      {
+        Timer::Sentry sentry(timer,"TBBRange2DBoids") ;
+        generator.tbbrange2dfindNeighbors(boids,y2,radius) ;
+      }
+      std::cout << "finish 4\n" ;
     //   double normy = PPTP::norm2(y) ;
     //   std::cout<<"TBBRange2DTile ||y||="<<normy<<std::endl ;
-    // }
+        for(int i=0; i<nb; ++i)
+            if(y2[i]!=0)
+                if(y[i] != y2[i]) 
+                {
+                    std::cout << "False" << "\n" ;
+                    break ;
+                }
+    }
   
   timer.printInfo() ;
   return 0 ;

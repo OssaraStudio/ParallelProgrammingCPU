@@ -42,7 +42,7 @@ class BoidGenerator
         }
     };
 
-    void findNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius)
+    void findNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
     {
         for(int i=0; i<boids.size(); ++i)
         {
@@ -50,7 +50,7 @@ class BoidGenerator
         }
     };
 
-    void omptaskfindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius)
+    void omptaskfindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
     {
         std::size_t n_rows = boids.size();
         std::size_t nb_task = (n_rows+m_chunk_size-1)/m_chunk_size ;
@@ -93,7 +93,7 @@ class BoidGenerator
         
     };
 
-    void omptilefindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius)
+    void omptilefindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
     {
         std::size_t n_rows = boids.size();
         std::size_t nb_task = (n_rows+m_chunk_size-1)/m_chunk_size ;
@@ -136,6 +136,60 @@ class BoidGenerator
         }
         
     };
+
+    void tbbrangefindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
+      {
+        std::size_t n_rows = body.size() ;
+        {
+            // TODO TBB WITH RANGE
+          tbb::parallel_for(tbb::blocked_range<size_t>(0, n_rows, m_chunk_size),
+                          [&](tbb::blocked_range<size_t> const& r)
+                          {
+                            for(auto irow=r.begin(); irow<r.end(); ++irow)
+                            {
+                              std::vector<Boid> local_neighbors ;
+                              for(std::size_t i =0; i<n_rows;++i)
+                              {
+                                if ((&boids[i] != &boids[irow]) && 
+                                (boids[irow].getPosition().euclidean_dist(boids[i].getPosition()) < radius))
+                                {
+                                    local_neighbors.push_back(boids[i]);
+                                }
+                              }
+                              y[irow] = local_neighbors.size() ;
+                            }
+                          });
+        }
+      }
+
+      void tbbrange2dfindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
+      {
+        std::size_t n_rows = body.size() ;
+        tbb::spin_mutex mutex ;
+        {
+                // TODO TBB RANGE 2D
+                tbb::parallel_for(tbb::blocked_range2d<size_t>(0, m_nrows, m_chunk_size, 0, m_nrows, m_chunk_size),
+                          [&](tbb::blocked_range2d<size_t> const& r)
+                          {
+                            for(auto irow=r.rows().begin(); irow<r.rows().end(); ++irow)
+                            {
+                              std::vector<Boid> local_neighbors ;
+                              for(auto jcol =r.cols().begin(); jcol<r.cols().end();++jcol)
+                              {
+                                if ((&boids[i] != &boids[irow]) && 
+                                (boids[irow].getPosition().euclidean_dist(boids[i].getPosition()) < radius))
+                                {
+                                    local_neighbors.push_back(boids[i]);
+                                }
+                              }
+                              {
+                                tbb::spin_mutex::scoped_lock lock(mutex) ;
+                                y[irow] = local_neighbors.size() ;
+                              }
+                            }
+                          });
+        }
+      }
 
     private:
         int m_chunk_size = 1 ;
