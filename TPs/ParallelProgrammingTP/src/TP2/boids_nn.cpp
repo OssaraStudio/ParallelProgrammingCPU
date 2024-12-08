@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 
     generator.setChunkSize(vm["chunk-size"].as<int>()) ;
     {
-        std::vector<double> y(nrows);
+        std::vector<double> y(nb);
         {
             Timer::Sentry sentry(timer,"OMPTaskBoids") ;
             generator.omptaskfindNeighbors(boids,y,radius) ;
