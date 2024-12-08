@@ -145,12 +145,11 @@ int main(int argc, char** argv)
     //   std::cout<<"TBBRange2DTile ||y||="<<normy<<std::endl ;
         for(int i=0; i<nb; ++i)
             if(y2[i]!=0)
-                std::cout << y[i] << " - " << y2[i] << "\n" ;
-                // if(y[i] != y2[i]) 
-                // {
-                //     std::cout << "False TBBRange2DBoids" << "\n" ;
-                //     break ;
-                // }
+                if(y[i] != y2[i]) 
+                {
+                    std::cout << "False TBBRange2DBoids" << "\n" ;
+                    break ;
+                }
     }
   
   timer.printInfo() ;
