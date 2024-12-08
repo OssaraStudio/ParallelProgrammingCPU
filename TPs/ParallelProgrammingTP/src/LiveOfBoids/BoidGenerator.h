@@ -70,15 +70,16 @@ class BoidGenerator
                   for(std::size_t irow =start_row; irow<end_row; ++irow)
                   {
                     int value = 0 ;
+                    std::vector<Boid> local_neighbors ;
                     for (size_t i = 0; i < n_rows; ++i)
                     {
                         if ((&boids[i] != &boids[irow]) && 
                                 (boids[irow].getPosition().euclidean_dist(boids[i].getPosition()) < radius))
                         {
-                            value ++ ;
+                            local_neighbors.push_back(boids[i]);
                         }
                     }
-                    y[irow] = value ;
+                    y[irow] = local_neighbors.size() ;
                   }
                 }
               }
