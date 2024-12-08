@@ -71,7 +71,7 @@ int main(int argc, char** argv)
             Timer::Sentry sentry(timer,"Boids") ;
             generator.findNeighbors(boids,y,radius) ;
         }
-        std::cout << "finish\n" ;
+        std::cout << "finish Boids\n" ;
         // double normy = PPTP::norm2(y) ;
         // std::cout<<"||y||="<<normy<<std::endl ;
         // for(int i=0; i<nb; ++i)
@@ -93,7 +93,7 @@ int main(int argc, char** argv)
             if(y2[i]!=0)
                 if(y[i] != y2[i]) 
                 {
-                    std::cout << "False" << "\n" ;
+                    std::cout << "False OMPTaskBoids" << "\n" ;
                     break ;
                 }
     }
@@ -111,7 +111,7 @@ int main(int argc, char** argv)
             if(y2[i]!=0)
                 if(y[i] != y2[i]) 
                 {
-                    std::cout << "False" << "\n" ;
+                    std::cout << "False OMPTileBoids" << "\n" ;
                     break ;
                 }
     }
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
             if(y2[i]!=0)
                 if(y[i] != y2[i]) 
                 {
-                    std::cout << "False" << "\n" ;
+                    std::cout << "False TBBRangeBoids" << "\n" ;
                     break ;
                 }
     }
@@ -140,14 +140,14 @@ int main(int argc, char** argv)
         Timer::Sentry sentry(timer,"TBBRange2DBoids") ;
         generator.tbbrange2dfindNeighbors(boids,y2,radius) ;
       }
-      std::cout << "finish 4\n" ;
+      std::cout << "finish 5\n" ;
     //   double normy = PPTP::norm2(y) ;
     //   std::cout<<"TBBRange2DTile ||y||="<<normy<<std::endl ;
         for(int i=0; i<nb; ++i)
             if(y2[i]!=0)
                 if(y[i] != y2[i]) 
                 {
-                    std::cout << "False" << "\n" ;
+                    std::cout << "False TBBRange2DBoids" << "\n" ;
                     break ;
                 }
     }
