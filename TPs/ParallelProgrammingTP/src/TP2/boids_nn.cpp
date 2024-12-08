@@ -78,7 +78,7 @@ int main(int argc, char** argv)
                 std::cout << y[i] << "\n" ;
     }
 
-    matrix.setChunkSize(vm["chunk-size"].as<int>()) ;
+    generator.setChunkSize(vm["chunk-size"].as<int>()) ;
     {
         std::vector<double> y(nrows);
         {
