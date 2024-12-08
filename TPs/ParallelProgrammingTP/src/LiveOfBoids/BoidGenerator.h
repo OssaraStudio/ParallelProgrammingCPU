@@ -69,7 +69,6 @@ class BoidGenerator
                 {
                   for(std::size_t irow =start_row; irow<end_row; ++irow)
                   {
-                    int value = 0 ;
                     std::vector<Boid> local_neighbors ;
                     for (size_t i = 0; i < n_rows; ++i)
                     {
@@ -91,6 +90,50 @@ class BoidGenerator
         // {
         //     y[i] = boids[i].omptaskget_neighbors(boids, radius).size();
         // }
+        
+    };
+
+    void omptilefindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius)
+    {
+        std::size_t n_rows = boids.size();
+        std::size_t nb_task = (n_rows+m_chunk_size-1)/m_chunk_size ;
+
+        #pragma omp parallel
+        {
+          #pragma omp single
+          {
+            // TODO TASK OPENMP 2D
+            for (std::size_t row_task_id = 0; row_task_id < nb_task; ++row_task_id)
+            {
+              for (std::size_t col_task_id = 0; col_task_id < nb_task; ++col_task_id)
+              {
+                std::size_t start_row = row_task_id * m_chunk_size ;
+                std::size_t end_row = std::min(start_row + m_chunk_size, n_rows) ;
+
+                std::size_t start_col = col_task_id * m_chunk_size ;
+                std::size_t end_col = std::min(start_col + m_chunk_size, n_rows) ;
+
+                #pragma omp task firstprivate(start_row, end_row, start_col, end_col)
+                {
+                  for (std::size_t irow = start_row; irow < end_row; ++irow)
+                  {
+                    std::vector<Boid> local_neighbors ;
+                    for (std::size_t jcol = start_col; jcol < end_col; ++jcol)
+                    {
+                      if ((&boids[i] != &boids[irow]) && 
+                                (boids[irow].getPosition().euclidean_dist(boids[i].getPosition()) < radius))
+                        {
+                            local_neighbors.push_back(boids[i]);
+                        }
+                    }
+                    #pragma omp atomic
+                    y[irow] = local_neighbors.size() ;
+                  }
+                }
+              }
+            }
+          }
+        }
         
     };
 

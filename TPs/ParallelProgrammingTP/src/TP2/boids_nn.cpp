@@ -98,15 +98,23 @@ int main(int argc, char** argv)
                 }
     }
 
-    // {
-    //   std::vector<double> y(nrows);
-    //   {
-    //     Timer::Sentry sentry(timer,"OMPTileBoids") ;
-    //     matrix.omptilemult(x,y) ;
-    //   }
-    //   double normy = PPTP::norm2(y) ;
-    //   std::cout<<"OMPTile ||y||="<<normy<<std::endl ;
-    // }
+    {
+      std::vector<int> y2(nb);
+        {
+            Timer::Sentry sentry(timer,"OMPTaskBoids") ;
+            generator.omptilefindNeighbors(boids,y2,radius) ;
+        }
+        std::cout << "finish 3\n" ; 
+        // double normy = PPTP::norm2(y) ;
+        // std::cout<<"OMPTask ||y||="<<normy<<std::endl ;
+        for(int i=0; i<nb; ++i)
+            if(y2[i]!=0)
+                if(y[i] != y2[i]) 
+                {
+                    std::cout << "False" << "\n" ;
+                    break ;
+                }
+    }
 
     // {
     //   std::vector<double> y(nrows);
