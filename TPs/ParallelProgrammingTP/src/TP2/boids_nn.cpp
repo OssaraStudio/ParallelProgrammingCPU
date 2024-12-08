@@ -78,16 +78,19 @@ int main(int argc, char** argv)
                 std::cout << y[i] << "\n" ;
     }
 
-    // matrix.setChunkSize(vm["chunk-size"].as<int>()) ;
-    // {
-    //     std::vector<double> y(nrows);
-    //     {
-    //         Timer::Sentry sentry(timer,"OMPTaskBoids") ;
-    //         matrix.omptaskmult(x,y) ;
-    //     }
-    //     double normy = PPTP::norm2(y) ;
-    //     std::cout<<"OMPTask ||y||="<<normy<<std::endl ;
-    // }
+    matrix.setChunkSize(vm["chunk-size"].as<int>()) ;
+    {
+        std::vector<double> y(nrows);
+        {
+            Timer::Sentry sentry(timer,"OMPTaskBoids") ;
+            generator.omptaskfindNeighbors(boids,y,radius) ;
+        }
+        // double normy = PPTP::norm2(y) ;
+        // std::cout<<"OMPTask ||y||="<<normy<<std::endl ;
+        for(int i=0; i<nb; ++i)
+            if(y[i]!=0)
+                std::cout << y[i] << "\n" ;
+    }
 
     // {
     //   std::vector<double> y(nrows);
