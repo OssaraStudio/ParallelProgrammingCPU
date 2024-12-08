@@ -48,7 +48,7 @@ class BoidGenerator
         }
     };
 
-    void omptaskfindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius)
+    void omptaskfindNeighbors(std::vector<Boid>& boids)
     {
         std::size_t nb_task = (boids.size()+m_chunk_size-1)/m_chunk_size ;
         std::cout << "nb_task = " << nb_task << "\n" ;
