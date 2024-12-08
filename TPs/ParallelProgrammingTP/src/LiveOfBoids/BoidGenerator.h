@@ -18,6 +18,11 @@ class BoidGenerator
     BoidGenerator(){}
     virtual ~BoidGenerator(){}
 
+    void setChunkSize(int chunk_size)
+    {
+        m_chunk_size = chunk_size ;
+    };
+
     void generate(int nb, std::vector<Boid>& boids)
     {
         std::random_device rd;
@@ -42,6 +47,15 @@ class BoidGenerator
             y[i] = boids[i].get_neighbors(boids, radius).size() ;
         }
     };
+
+    void omptaskfindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius)
+    {
+        std::size_t nb_task = (boids.size()+m_chunk_size-1)/m_chunk_size ;
+        std::cout << "nb_task = " << nb_task << "\n" ;
+    };
+
+    private:
+        int m_chunk_size = 1 ;
 
 };
 
