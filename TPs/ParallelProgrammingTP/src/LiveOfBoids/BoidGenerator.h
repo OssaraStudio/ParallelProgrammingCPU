@@ -93,7 +93,6 @@ class BoidGenerator
         
     };
 
-    // void omptilefindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
     void omptilefindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
     {
         std::size_t n_rows = boids.size();
@@ -163,7 +162,7 @@ class BoidGenerator
                             }
                           });
         }
-      }
+      };
 
       void tbbrange2dfindNeighbors(std::vector<Boid>& boids, std::vector<int>& y, float radius) const
       {
