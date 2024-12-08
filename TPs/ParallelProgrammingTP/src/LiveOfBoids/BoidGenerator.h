@@ -191,7 +191,7 @@ class BoidGenerator
                             }
                           });
         }
-      }
+      };
 
     private:
         int m_chunk_size = 1 ;
