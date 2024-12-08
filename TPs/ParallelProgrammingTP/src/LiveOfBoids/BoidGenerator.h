@@ -168,7 +168,7 @@ class BoidGenerator
         tbb::spin_mutex mutex ;
         {
                 // TODO TBB RANGE 2D
-                tbb::parallel_for(tbb::blocked_range2d<size_t>(0, m_nrows, m_chunk_size, 0, m_nrows, m_chunk_size),
+                tbb::parallel_for(tbb::blocked_range2d<size_t>(0, n_rows, m_chunk_size, 0, n_rows, m_chunk_size),
                           [&](tbb::blocked_range2d<size_t> const& r)
                           {
                             for(auto irow=r.rows().begin(); irow<r.rows().end(); ++irow)
