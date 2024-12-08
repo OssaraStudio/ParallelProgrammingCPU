@@ -176,10 +176,10 @@ class BoidGenerator
                               std::vector<Boid> local_neighbors ;
                               for(auto jcol =r.cols().begin(); jcol<r.cols().end();++jcol)
                               {
-                                if ((&boids[i] != &boids[irow]) && 
-                                (boids[irow].getPosition().euclidean_dist(boids[i].getPosition()) < radius))
+                                if ((&boids[jcol] != &boids[irow]) && 
+                                (boids[irow].getPosition().euclidean_dist(boids[jcol].getPosition()) < radius))
                                 {
-                                    local_neighbors.push_back(boids[i]);
+                                    local_neighbors.push_back(boids[jcol]);
                                 }
                               }
                               {
