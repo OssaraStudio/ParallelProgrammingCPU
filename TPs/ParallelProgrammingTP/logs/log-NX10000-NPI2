@@ -1,0 +1,15 @@
+NB PROCS     :16
+NB AVAILABLE_THREADS :2
+finish Boids
+finish 2
+finish 3
+finish 4
+finish 5
+================================
+PERF INFO : 
+Boids:3.49903
+OMPTaskBoids:1.78526
+OMPTileBoids:62.1137
+TBBRange2DBoids:0.490031
+TBBRangeBoids:0.272839
+================================
